@@ -1,0 +1,5 @@
+{
+  "version": "2.81",
+  "file": "Bataille-v2.81.html",
+  "notes": "v2.81 — HALL OF FAME EN LIGNE RÉPARÉ : l'ancien serveur de scores avait disparu (404) — les scores ne partaient jamais en ligne. Nouveau serveur branché : « ENVOYER LE SCORE » publie maintenant au classement mondial. Au passage : délai max de 8 s sur l'envoi (plus de « ENVOI… » bloqué) et anti-doublons si l'envoi est répété."
+}
