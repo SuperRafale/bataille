@@ -997,25 +997,21 @@ button.bonus-flash{animation:bonusFlash .5s ease-in-out 3 !important}
 .score-preview span{font-size:8px; letter-spacing:.12em; color:var(--dim)}
 .submitted-badge{display:inline-block; background:var(--phos-dk); border:1px solid var(--phos);
   color:var(--phos); padding:3px 10px; font-size:9px; letter-spacing:.18em; margin-top:4px; border-radius:2px}
-/* ★ v2.82 : bandeau discret hors ligne — le Service Worker sert le jeu du
-   cache quand le réseau est coupé ; le bandeau prévient sans gêner. */
-#offline-bar{position:fixed; left:50%; bottom:12px; transform:translateX(-50%); z-index:9999;
-  background:rgba(4,20,31,.92); border:1px solid var(--amber); color:var(--amber);
-  font-size:9px; letter-spacing:.14em; padding:5px 12px; border-radius:3px;
-  pointer-events:none; text-transform:uppercase; white-space:nowrap; box-shadow:0 2px 14px rgba(0,0,0,.5)}
-/* ★ v2.85 : bandeau de liaison réseau (reconnexion en cours) — même esprit
-   que le bandeau hors ligne ; au-dessus de lui pour ne jamais se chevaucher. */
-#netbar{position:fixed; left:50%; bottom:44px; transform:translateX(-50%); z-index:9999;
+/* ★ v2.85 : bandeau de liaison réseau (reconnexion en cours en pleine partie).
+   v2.86 : le bandeau « hors ligne » est supprimé (inutile, et affiché à tort
+   faute de règle .hidden) ; le netbar reprend sa place en bas, avec une règle
+   dédiée #netbar.hidden — la règle .hidden globale ne couvre que .overlay. */
+#netbar{position:fixed; left:50%; bottom:12px; transform:translateX(-50%); z-index:9999;
   background:rgba(4,20,31,.92); border:1px solid var(--phos); color:var(--phos);
   font-size:9px; letter-spacing:.14em; padding:5px 12px; border-radius:3px;
   pointer-events:none; text-transform:uppercase; white-space:nowrap; box-shadow:0 2px 14px rgba(0,0,0,.5);
   animation:netpulse 1.6s ease-in-out infinite}
+#netbar.hidden{display:none}
 @keyframes netpulse{0%,100%{opacity:1}50%{opacity:.55}}
 </style>
 </head>
 <body>
 <noscript><div style="padding:20px;text-align:center;color:#ff5964;font-family:monospace">JavaScript est désactivé — le jeu ne peut pas fonctionner. Ouvrez ce fichier dans Chrome avec JS activé.</div></noscript>
-<div id="offline-bar" class="hidden">◌ Hors ligne — version en cache · classement et mises à jour en attente de réseau</div>
 <div id="netbar" class="hidden"></div>
 <div id="app">
   <header id="topbar">
@@ -1265,7 +1261,7 @@ button.bonus-flash{animation:bonusFlash .5s ease-in-out 3 !important}
         <div class="aide-item"><h3>🚀 MISSILE STRATUS ×2</h3><p>Frappe la case visée + les 8 cases autour (<b>zone 3 × 3</b>). Munition précieuse : ménagez-la, elle rapporte du score si elle est intacte.</p></div>
         <div class="aide-item"><h3>🎣 PLEINE MER</h3><p><b>12 bateaux de pêche</b> cachés près des flottes. Les toucher = <b>-1 vie</b> (3 vies par joueur). Ils apparaissent en bleu au drone : <b>NE TIREZ PAS DESSUS</b>.</p></div>
         <div class="aide-item"><h3>💀 DEATH</h3><p>Chaque tir est un missile 3 × 3 <b>illimité</b>. Pas de drone. Destruction massive.</p></div>
-        <div class="aide-item"><h3>📶 HORS LIGNE (SITE WEB)</h3><p>Ouvert depuis le site web, le jeu s'installe dans le navigateur (Service Worker) : même <b>sans connexion</b>, l'adresse reste jouable — un petit bandeau le signale. Le classement mondial et les mises à jour reprennent au retour du réseau. Depuis le disque (fichier HTML), tout est déjà local, rien ne change.</p></div>
+        <div class="aide-item"><h3>📶 HORS LIGNE (SITE WEB)</h3><p>Ouvert depuis le site web, le jeu s'installe dans le navigateur (Service Worker) : même <b>sans connexion</b>, l'adresse reste jouable, sans aucun bandeau. Le classement mondial et les mises à jour reprennent au retour du réseau. Depuis le disque (fichier HTML), tout est déjà local, rien ne change.</p></div>
         <div class="aide-item"><h3>🏆 SCORE (CLASSIQUE)</h3><p>Rapidité de coulage : <b>1 coup 200</b> · 2 coups 100 · 3 coups 50 · 4-5 coups 25, + prime de type (Porte-avions & Croiseur <b>100</b> · Frégate 80 · Sous-marin 60 · Torpilleur 30) + détections <b>×100</b> + bonus d'économie (tirs ×5, drones ×100, missiles ×150) + <b>+500 si vous GAGNEZ</b>. Couler un navire d'un SEUL tir (missile 3×3) rapporte 200 + la prime !</p></div>
       </div>
       <button class="btn ghost" id="aide-back" style="margin-top:8px">RETOUR</button>
@@ -6371,7 +6367,7 @@ function flushPending() {
   const now = Date.now();
   S.pending.forEach(m => { m._last = now - 1600; });
 }
-/* ★ v2.85 — BANDEAU DE LIAISON (réutilise le style du bandeau hors ligne). */
+/* ★ v2.85 — BANDEAU DE LIAISON (affiché en pleine partie seulement). */
 function setNetBanner(txt) {
   const b = $('#netbar');
   if (!b) return;
@@ -7114,14 +7110,6 @@ if (UPDATE_CFG.auto && store.get('tc-upd-auto') !== '0') {
   if (!('serviceWorker' in navigator) || !/^https?:$/.test(location.protocol)) return;
   navigator.serviceWorker.register('sw.js').catch(() => {});   /* silencieux : pas de sw.js à côté → rien ne change */
 })();
-
-/* ★ v2.82 : bandeau discret hors ligne — affiché seulement si l'appareil
-   perd le réseau (le SW sert alors le jeu du cache). Disparaît au retour. */
-const OFFBAR = document.getElementById('offline-bar');
-function offbarSync() { if (OFFBAR) OFFBAR.classList.toggle('hidden', navigator.onLine !== false); }
-window.addEventListener('online', offbarSync);
-window.addEventListener('offline', offbarSync);
-offbarSync();
 
 /* ================= TEXTE ALTERNATIF SUPER RAFALE ================= */
 const RAFALE_QUOTES = [
