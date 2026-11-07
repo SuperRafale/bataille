@@ -1,5 +1,5 @@
 {
-  "version": "2.86",
+  "version": "2.87",
   "file": "index.html",
-  "notes": "v2.86 — BONUS EN DOUBLE + SUPER DRONE 🛸 : 8 bonus cachés (2 de chaque sorte) au lieu de 3 — 🚀 +1 missile Stratus, 🛰 +1 drone (au lieu de 2), 💎 +200 points, et la nouvelle soucoupe 🛸 +1 SUPER DRONE : un scan 5×5 immédiat, sans attendre d'avoir 7 drones. Les bonus ne se posent jamais sous un navire, un navire repositionné ne peut plus les recouvrir, et les drones (simples et super) repèrent maintenant les bonus ennemis sur leur passage : halo ambre sur le radar, tirez dessus pour encaisser la récompense. Plein écran v2.84, anti-coupures v2.85 et mode hors ligne (Service Worker) restent bien en jeu. Le bandeau « hors ligne » qui s'affichait à tort en bas de l'écran (même connecté) est supprimé, ainsi que le petit cadre vert vide qui l'accompagnait."
+  "notes": "v2.87 — BONUS EN DOUBLE + SUPER DRONE 🛸 : 8 bonus cachés (2 de chaque sorte) au lieu de 3 — 🚀 +1 missile Stratus, 🛰 +1 drone (au lieu de 2), 🛸 +1 SUPER DRONE (scan 5×5), 💎 +200 points. Jamais sous un navire, jamais recouverts. Radar des drones : les bonus survolés apparaissent en révélation éphémère (icône + cercle vert, comme les navires) puis s'effacent — plus de marque permanente. Le bandeau « hors ligne » qui s'affichait à tort (même connecté) est supprimé, ainsi que le petit cadre vert vide. Toujours inclus : le PLEIN ÉCRAN infaillible (v2.84) et la résistance ANTI-COUPURES réseau (v2.85)."
 }

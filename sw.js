@@ -16,7 +16,7 @@
    dessous (même numéro que le BUILD du jeu) → le navigateur détecte le
    sw.js modifié, l'installe, purge l'ancien cache à l'activation. */
 
-const SW_VERSION = 'superrafale-v2.86';
+const SW_VERSION = 'superrafale-v2.87';
 const PRECACHE = ['./', './bataille-update.json'];
 
 /* INSTALLATION : précache du jeu + manifeste, puis prise de service
