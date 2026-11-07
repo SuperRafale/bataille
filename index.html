@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
-<!-- SUPER RAFALE · BUILD 2.86 · fichier autonome (+ sw.js optionnel : mode hors ligne sur serveur web) -->
+<!-- SUPER RAFALE · BUILD 2.88 · fichier autonome (+ sw.js optionnel : mode hors ligne sur serveur web) -->
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -79,7 +79,9 @@ body::after{
 #app{max-width:520px; height:100dvh; margin:0 auto; display:flex; flex-direction:column;
   padding:calc(env(safe-area-inset-top) + 4px) 14px calc(env(safe-area-inset-bottom) + 6px);
   overflow-x:hidden; box-sizing:border-box; width:100%;}
-#topbar{display:flex; align-items:center; gap:10px; min-height:44px; padding-bottom:4px; overflow:hidden}
+/* ★ v2.88 : position:relative + overflow:visible — le bouton SHOP est posé
+   SOUS la barre (top:100%), overflow:hidden le rognerait. */
+#topbar{display:flex; align-items:center; gap:10px; min-height:44px; padding-bottom:4px; position:relative; overflow:visible}
 .clover-logo{width:34px; height:30px; flex:none;
   filter:drop-shadow(0 0 5px rgba(108,245,184,.55));
   animation:cloverSway 3s ease-in-out infinite}
@@ -98,6 +100,16 @@ body::after{
 .hbtn.on{display:flex}
 .hbtn svg{width:22px;height:22px}
 .hbtn:active{background:var(--panel)}
+/* ★ v2.88 : bouton SHOP — pastille sous les boutons plein écran / son (lien
+   boutique Dassault Aviation, nouvel onglet). Masquée pendant le jeu
+   (placement / bataille) : la place est occupée par les barres de flotte. */
+#btn-shop{position:absolute; top:calc(100% + 3px); right:6px; height:28px; padding:0 13px;
+  display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:30;
+  font-family:"Bebas Neue"; font-size:13px; letter-spacing:.2em; color:var(--phos);
+  text-decoration:none; border:1px solid rgba(108,245,184,.45); border-radius:2px;
+  background:var(--deep)}
+#btn-shop:active{background:var(--panel)}
+body.scr-game #btn-shop{display:none}
 main{flex:1; min-height:0; display:flex; flex-direction:column}
 .screen{display:none; flex:1; min-height:0; flex-direction:column; overflow:hidden}
 .screen.active{display:flex; animation:scrIn .3s ease-out}
@@ -244,7 +256,10 @@ button.bonus-flash{animation:bonusFlash .5s ease-in-out 3 !important}
   filter:drop-shadow(0 0 4px rgba(108,245,184,.55))}
 .bmark.found{opacity:1; filter:drop-shadow(0 0 7px var(--phos))}
 .bmark.found::after{content:''; position:absolute; inset:14%; border:2px solid var(--phos); border-radius:50%; opacity:.8}
-/* ★ v2.86 : bonus REPÉRÉ par un drone — halo ambre, pas d'anneau (pas encore touché) */
+/* ★ v2.86 : bonus NON ENCAISSÉ (grille du propriétaire) — halo ambre, pas
+   d'anneau. ★ v2.88 : sert aussi à la révélation ÉPHÉMÈRE du repérage par
+   drone (icône ambre, SANS anneau vert — l'anneau reste réservé aux bonus
+   encaissés, classe « found »). */
 .bmark.spotted{opacity:.95; filter:drop-shadow(0 0 5px rgba(255,180,84,.75))}
 .bfx{position:absolute; width:10%; height:10%; display:flex; align-items:center; justify-content:center;
   pointer-events:none; z-index:9; font-size:min(4.6vw,26px); line-height:1; animation:bfxPop 1.7s ease-out forwards}
@@ -1053,11 +1068,12 @@ button.bonus-flash{animation:bonusFlash .5s ease-in-out 3 !important}
         <path class="s-off" style="display:none" d="M17 9l5 5M22 9l-5 5"/>
       </svg>
     </button>
+    <a id="btn-shop" href="https://www.thestore-dassault-aviation.com/" target="_blank" rel="noopener noreferrer" aria-label="Boutique Dassault Aviation">SHOP</a>
   </header>
 
   <main>
     <section id="scr-home" class="screen active">
-      <p class="version" id="upd-version" title="Vérifier les mises à jour">v2.86<span class="upd-dot hidden">●</span></p>
+      <p class="version" id="upd-version" title="Vérifier les mises à jour">v2.88<span class="upd-dot hidden">●</span></p>
       <div class="hero-sonar">
         <div class="beam"></div><div class="rings"></div><div class="core"></div>
         <span class="hs-blip" style="--a:52deg"></span>
@@ -1257,7 +1273,7 @@ button.bonus-flash{animation:bonusFlash .5s ease-in-out 3 !important}
         <div class="aide-item"><h3>🎯 VISER</h3><p>La vue <b>RADAR</b> montre la grille ennemie pour choisir vos tirs ; la vue <b>MA FLOTTE</b> montre la vôtre, vos navires touchés et vos <b>batteries anti-drônes</b> (2, installées sur le croiseur et la frégate).</p></div>
         <div class="aide-item"><h3>🛰 DRONE FURTIF ×5</h3><p>Scanne la case visée + 4 adjacentes (croix). Navires révélés = <b>points verts</b>. ⚠ Les batteries ennemies <b>tirent et détruisent le drone</b> si la case visée est à <b>1 case ou moins</b> d'elles — visez plus loin ! Chaque navire coulé = <b>+1 drone</b> (tous les 4 coulés : <b>+1 missile</b> à la place).</p></div>
         <div class="aide-item"><h3>🛰 SUPER DRONE</h3><p>À <b>7 drones en réserve</b> — ou avec une <b>charge SUPER DRONE 🛸</b> gagnée en bonus — le bouton devient SUPER DRONE : la zone de scan passe à <b>5 × 5</b> (25 cases). Une batterie située au bord de la zone (à 2 cases) reste silencieuse.</p></div>
-        <div class="aide-item"><h3>🎁 BONUS CACHÉS (CLASSIQUE)</h3><p>Après validation de votre flotte, <b>8 bonus</b> (2 de chaque sorte) sont cachés au hasard sur VOTRE grille — sur des cases vides, <b>jamais sous un navire</b>, et un navire repositionné ne peut pas les recouvrir. Si l'adversaire touche une case bonus — tir simple ou zone Stratus 3×3 — son tir est consommé mais il gagne : 🚀 <b>+1 missile Stratus</b> · 🛰 <b>+1 drone</b> · 🛸 <b>+1 SUPER DRONE</b> · 💎 <b>+200 points</b>. Vous voyez vos marques, lui ne voit rien… <b>sauf s'il survole la zone avec un drone</b> : l'icône du bonus apparaît alors sur son radar (tire dessus pour encaisser la récompense).</p></div>
+        <div class="aide-item"><h3>🎁 BONUS CACHÉS (CLASSIQUE)</h3><p>Après validation de votre flotte, <b>8 bonus</b> (2 de chaque sorte) sont cachés au hasard sur VOTRE grille — sur des cases vides, <b>jamais sous un navire</b>, et un navire repositionné ne peut pas les recouvrir. Si l'adversaire touche une case bonus — tir simple ou zone Stratus 3×3 — son tir est consommé mais il gagne : 🚀 <b>+1 missile Stratus</b> · 🛰 <b>+1 drone</b> · 🛸 <b>+1 SUPER DRONE</b> · 💎 <b>+200 points</b>. Vous voyez vos marques, lui ne voit rien… <b>sauf s'il survole la zone avec un drone</b> : l'icône du bonus apparaît alors un instant sur son radar — <b>en ambre, sans l'anneau vert</b> (l'anneau reste réservé aux bonus encaissés) — puis s'efface — à lui de s'en souvenir (tire dessus pour encaisser la récompense).</p></div>
         <div class="aide-item"><h3>🚀 MISSILE STRATUS ×2</h3><p>Frappe la case visée + les 8 cases autour (<b>zone 3 × 3</b>). Munition précieuse : ménagez-la, elle rapporte du score si elle est intacte.</p></div>
         <div class="aide-item"><h3>🎣 PLEINE MER</h3><p><b>12 bateaux de pêche</b> cachés près des flottes. Les toucher = <b>-1 vie</b> (3 vies par joueur). Ils apparaissent en bleu au drone : <b>NE TIREZ PAS DESSUS</b>.</p></div>
         <div class="aide-item"><h3>💀 DEATH</h3><p>Chaque tir est un missile 3 × 3 <b>illimité</b>. Pas de drone. Destruction massive.</p></div>
@@ -1494,7 +1510,7 @@ const store = {
         classique à remplacer manuellement, puis rouvrir le jeu.
    Pour publier une nouvelle version : mettre en ligne le nouveau
    Bataille.html + mettre à jour la clé « version » du manifeste. */
-const GAME_VERSION = '2.86';
+const GAME_VERSION = '2.88';
 const UPDATE_CFG = {
   url: 'bataille-update.json',   /* adresse du manifeste : chemin relatif (même dossier, jeu servi par un serveur) ou URL absolue (https://...) */
   page: '',                      /* lien manuel optionnel : page de téléchargement affichée si la vérification échoue */
@@ -2010,13 +2026,14 @@ function awardBonus(p, type) {
   }
   Sound.ready(); vib([40, 60, 40, 60, 120]);
 }
-/* Marques de bonus sur une grille : onlyFound=true → les trouvés (touchés)
-   ET les repérés par drone ★ v2.86 (radar de l'attaquant) ;
-   onlyFound=false → tous (grille du propriétaire). */
+/* Marques de bonus sur une grille : onlyFound=true → les TROUVÉS (touchés)
+   seulement ★ v2.87 — un bonus simplement repéré par drone ne laisse plus
+   de marque permanente sur le radar (révélation éphémère bonusSpotFx à la
+   place) ; onlyFound=false → tous (grille du propriétaire). */
 function paintBonusMarks(g, board, onlyFound) {
   if (!board || !board.bonus || !g || !g.markers) return;
   board.bonus.forEach(b => {
-    if (onlyFound && !b.found && !b.spotted) return;
+    if (onlyFound && !b.found) return;
     const d = BONUS_DEF.find(x => x.type === b.type);
     const el = document.createElement('div');
     el.className = 'bmark' + (b.found ? ' found' : ' spotted');
@@ -2046,6 +2063,24 @@ function bonusRevealFx(g, x, y, type) {
   g.fx.appendChild(el);
   setTimeout(() => el.remove(), 1700);
 }
+/* ★ v2.87 : révélation ÉPHÉMÈRE d'un bonus repéré par un drone (ou le SUPER
+   DRONE), puis effacement automatique : plus aucune marque permanente de
+   repérage sur le radar (comportement identique aux points verts des navires
+   détectés). ★ v2.88 : SANS l'anneau vert — l'anneau reste réservé aux bonus
+   ENCAISSÉS (marque permanente « found ») ; un bonus simplement repéré
+   s'affiche en icône ambre, comme les marques du propriétaire. */
+function bonusSpotFx(x, y, type) {
+  const g = GRIDS.radar;
+  if (!g || !g.fx) return;
+  const d = BONUS_DEF.find(t => t.type === type);
+  const el = document.createElement('div');
+  el.className = 'bmark spotted';
+  el.style.left = x * 10 + '%';
+  el.style.top = y * 10 + '%';
+  el.textContent = d ? d.icon : '🎁';
+  g.fx.appendChild(el);
+  setTimeout(() => el.remove(), 1600);
+}
 /* Côté ATTAQUANT (réseau) : applique les bonus trouvés depuis le rapport du
    défenseur — récompense immédiate + marque permanente sur le radar. */
 function applyBonusReport(list) {
@@ -2053,7 +2088,11 @@ function applyBonusReport(list) {
   (list || []).forEach((c, i) => {
     const idx = xy(c.x, c.y);
     S.radarB.bonus = S.radarB.bonus || [];
-    if (!S.radarB.bonus.some(b => b.idx === idx)) S.radarB.bonus.push({ idx, type: c.type, found: true });
+    /* ★ v2.87 : la collecte fait passer l'entrée du radar à « trouvé »
+       (cercle vert permanent), même si elle venait d'un repérage drone. */
+    const prev = S.radarB.bonus.find(b => b.idx === idx);
+    if (prev) { prev.found = true; prev.spotted = false; }
+    else S.radarB.bonus.push({ idx, type: c.type, found: true });
     setTimeout(() => {
       awardBonus(p, c.type);
       bonusRevealFx(GRIDS.radar, c.x, c.y, c.type);
@@ -2652,6 +2691,10 @@ function showScreen(id) {
   S.screen = id.replace('scr-', '');
   if (id === 'scr-home') updateCareerStrip();  /* ★ v2.74 : bandeau carrière */
   $('#btn-quit').classList.toggle('on', S.screen !== 'home');
+  /* ★ v2.88 : masque le bouton SHOP sur les écrans de jeu (placement/bataille)
+     — la zone sous les boutons du header y est occupée par le titre de
+     placement et les barres de flotte (cœurs de vie en Pleine mer). */
+  document.body.classList.toggle('scr-game', S.screen === 'place' || S.screen === 'battle');
 }
 function toast(msg, kind = 'ok', ms = 2400) {
   /* En bataille, redirige vers le log dédié sous la grille (cadre #log)
@@ -5093,17 +5136,15 @@ function stealthScan(cx, cy) {
         showFishingBoatDetected(c.x, c.y);
         fishingHits++;
       } else if (S.gameMode === 'classic') {
-        /* ★ v2.86 : bonus caché ennemi survolé par le drone (ou le SUPER
-           DRONE) → marqué « repéré » sur la vraie grille + halo ambre
-           permanent sur le radar. Repéré ≠ consommé : un tir sur la case
+        /* ★ v2.87 : bonus caché ennemi survolé par le drone (ou le SUPER
+           DRONE) → révélation ÉPHÉMÈRE sur le radar puis effacement
+           (★ v2.88 : icône AMBRE sans anneau vert — l'anneau reste réservé
+           aux bonus encaissés). Repéré ≠ consommé : un tir sur la case
            encaissera la récompense normalement. */
         const bl = bonusAt(foeBoard, idx);
-        if (bl && !bl.spotted) { bl.spotted = true; bonusSpotted++; }
+        if (bl) { bl.spotted = true; bonusSpotted++; bonusSpotFx(c.x, c.y, bl.type); }
       }
     });
-    /* ★ v2.86 : bonus repérés → marques ambre sur le radar (juste les bonus,
-       sans repeindre navires/tirs) */
-    if (bonusSpotted > 0) repaintBonusMarks(GRIDS.radar, foeBoard, true);
     /* En mode online, le log sera déclenché par onDroneScanResult
        quand la réponse du défenseur arrivera. */
     if (S.mode !== 'online') {
@@ -5746,9 +5787,10 @@ function onDroneScanReceived(cx, cy, isSuper) {
     const scanFishing = (S.gameMode === 'fishermen' ? (S.myFishingBoats || []) : [])
       .filter(idx => scannedIdx.includes(idx))
       .map(idx => ({ x: idx % 10, y: (idx / 10) | 0 }));
-    /* ★ v2.86 : renvoie aussi NOS bonus cachés survolés par le drone —
-       l'attaquant les voit en marques ambre sur son radar (repérés, pas
-       consommés). Champ optionnel : ignoré par un pair plus ancien. */
+    /* ★ v2.87 : renvoie aussi NOS bonus cachés survolés par le drone —
+       l'attaquant voit une révélation éphémère sur son radar (icône ambre
+       sans anneau, puis effacement ; repérés, pas consommés). Champ
+       optionnel : ignoré par un pair plus ancien. */
     const scanBonus = (S.gameMode === 'classic' ? (myBoard.bonus || []) : [])
       .filter(b => !b.found && scannedIdx.includes(b.idx))
       .map(b => ({ x: b.idx % 10, y: (b.idx / 10) | 0, type: b.type }));
@@ -5972,19 +6014,21 @@ function onDroneScanResult(hits, cx, cy, fishing, bonuses) {
       showFishingBoatDetected(h.x, h.y);
       fishingHits++;
     });
-    /* ★ v2.86 : bonus cachés adverses repérés par le drone → marques ambre
-       permanentes sur le radar (repérés, pas consommés). Repli : pair plus
-       ancien ou message sans champ bonus → aucun marque ajouté. */
+    /* ★ v2.87 : bonus cachés adverses repérés par le drone → révélation
+       ÉPHÉMÈRE sur le radar puis effacement — plus de marque permanente de
+       repérage (★ v2.88 : icône AMBRE sans anneau vert, l'anneau reste
+       réservé aux bonus encaissés). L'état garde la trace (un tir sur la
+       case encaissera la récompense). Repli : pair plus ancien ou message
+       sans champ bonus → rien. */
     let bonusHits = 0;
     (bonuses || []).forEach(b => {
       const idx = xy(b.x, b.y);
+      bonusHits++;
+      bonusSpotFx(b.x, b.y, b.type);
       S.radarB.bonus = S.radarB.bonus || [];
-      if (!S.radarB.bonus.some(e => e.idx === idx)) {
+      if (!S.radarB.bonus.some(e => e.idx === idx))
         S.radarB.bonus.push({ idx, type: b.type, found: false, spotted: true });
-        bonusHits++;
-      }
     });
-    if (bonusHits > 0) repaintBonusMarks(GRIDS.radar, S.radarB, true);
     const logParts = [(S.lastDroneSuper
       ? `<b style="color:var(--red)">SUPER DRONE</b>`
       : `<b style="color:var(--phos)">DRONE FURTIF</b>`)];

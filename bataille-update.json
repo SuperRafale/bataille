@@ -1,5 +1,5 @@
 {
-  "version": "2.87",
+  "version": "2.88",
   "file": "index.html",
-  "notes": "v2.87 — BONUS EN DOUBLE + SUPER DRONE 🛸 : 8 bonus cachés (2 de chaque sorte) au lieu de 3 — 🚀 +1 missile Stratus, 🛰 +1 drone (au lieu de 2), 🛸 +1 SUPER DRONE (scan 5×5), 💎 +200 points. Jamais sous un navire, jamais recouverts. Radar des drones : les bonus survolés apparaissent en révélation éphémère (icône + cercle vert, comme les navires) puis s'effacent — plus de marque permanente. Le bandeau « hors ligne » qui s'affichait à tort (même connecté) est supprimé, ainsi que le petit cadre vert vide. Toujours inclus : le PLEIN ÉCRAN infaillible (v2.84) et la résistance ANTI-COUPURES réseau (v2.85)."
+  "notes": "v2.88 — BOUTIQUE + RADAR DES DRONES AFFINÉ : nouveau bouton SHOP sous les boutons plein écran et son — ouvre la boutique Dassault Aviation (thestore-dassault-aviation.com) dans un nouvel onglet ; masqué pendant la partie, où la place est prise par les barres de flotte. Radar des drones : les bonus survolés apparaissent en révélation éphémère — icône AMBRE sans anneau vert (l'anneau reste réservé aux bonus ENCAISSÉS, tir sur la case) — puis s'effacent (~1,6 s), plus aucune marque permanente. Le bandeau « hors ligne » qui s'affichait à tort reste supprimé (v2.87). Toujours inclus : 8 bonus cachés dont le SUPER DRONE 🛸 (v2.87), le PLEIN ÉCRAN infaillible (v2.84) et la résistance ANTI-COUPURES réseau (v2.85)."
 }
