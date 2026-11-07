@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
-<!-- SUPER RAFALE · BUILD 2.84 · fichier autonome (+ sw.js optionnel : mode hors ligne sur serveur web) -->
+<!-- SUPER RAFALE · BUILD 2.86 · fichier autonome (+ sw.js optionnel : mode hors ligne sur serveur web) -->
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -18,8 +18,36 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;500;600&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
-<!-- ★ SDK Metered Realtime : gère signaling WebRTC + TURN + auto-reconnect -->
-<script src="https://unpkg.com/@metered-ca/realtime/dist/index.umd.js"></script>
+<!-- ★ SDK Metered Realtime : gère signaling WebRTC + TURN + auto-reconnect.
+     ★ v2.85 — ANTI-BLOCAGE : avant, ce script était CHARGÉ EN BLOQUANT :
+     si unpkg.com répondait lentement (liaison faible, serveur surchargé),
+     TOUTE la page restait figée — le jeu semblait « perdre la connexion »
+     dès l'ouverture. Désormais : chargement en tâche de fond, JAMAIS de
+     blocage, et 2e CDN (jsDelivr) en secours si unpkg ne répond pas. -->
+<script>
+/* Chargeur asynchrone du SDK réseau — 2 CDN en cascade, zéro blocage.
+   Réutilisable : window.__srLoadSdk(0, callback) retente proprement. */
+(function () {
+  var SR_SDK_SRCS = [
+    'https://unpkg.com/@metered-ca/realtime/dist/index.umd.js',
+    'https://cdn.jsdelivr.net/npm/@metered-ca/realtime/dist/index.umd.js'
+  ];
+  window.__srLoadSdk = function (i, ok) {
+    if (window.MeteredPeer || window.MeteredRealtime) { if (ok) ok(true); return; }
+    i = i || 0;
+    if (i >= SR_SDK_SRCS.length) { if (ok) ok(false); return; }
+    var s = document.createElement('script');
+    s.src = SR_SDK_SRCS[i]; s.async = true;
+    s.onload = function () {
+      if (window.MeteredPeer || window.MeteredRealtime) { if (ok) ok(true); }
+      else window.__srLoadSdk(i + 1, ok);
+    };
+    s.onerror = function () { window.__srLoadSdk(i + 1, ok); };
+    document.head.appendChild(s);
+  };
+  window.__srLoadSdk(0);
+})();
+</script>
 <script>
 /* ★ Clé publishable Metered Realtime (browser-only, safe to expose) */
 const METERED_API_KEY = 'pk_live_e2288fd1214e1f3713ce6758d243425b2c0bbaf3';
@@ -216,6 +244,8 @@ button.bonus-flash{animation:bonusFlash .5s ease-in-out 3 !important}
   filter:drop-shadow(0 0 4px rgba(108,245,184,.55))}
 .bmark.found{opacity:1; filter:drop-shadow(0 0 7px var(--phos))}
 .bmark.found::after{content:''; position:absolute; inset:14%; border:2px solid var(--phos); border-radius:50%; opacity:.8}
+/* ★ v2.86 : bonus REPÉRÉ par un drone — halo ambre, pas d'anneau (pas encore touché) */
+.bmark.spotted{opacity:.95; filter:drop-shadow(0 0 5px rgba(255,180,84,.75))}
 .bfx{position:absolute; width:10%; height:10%; display:flex; align-items:center; justify-content:center;
   pointer-events:none; z-index:9; font-size:min(4.6vw,26px); line-height:1; animation:bfxPop 1.7s ease-out forwards}
 @keyframes bfxPop{0%{transform:scale(.2); opacity:0}18%{transform:scale(1.7); opacity:1}70%{transform:scale(1.25); opacity:1}100%{transform:scale(1); opacity:0}}
@@ -973,11 +1003,20 @@ button.bonus-flash{animation:bonusFlash .5s ease-in-out 3 !important}
   background:rgba(4,20,31,.92); border:1px solid var(--amber); color:var(--amber);
   font-size:9px; letter-spacing:.14em; padding:5px 12px; border-radius:3px;
   pointer-events:none; text-transform:uppercase; white-space:nowrap; box-shadow:0 2px 14px rgba(0,0,0,.5)}
+/* ★ v2.85 : bandeau de liaison réseau (reconnexion en cours) — même esprit
+   que le bandeau hors ligne ; au-dessus de lui pour ne jamais se chevaucher. */
+#netbar{position:fixed; left:50%; bottom:44px; transform:translateX(-50%); z-index:9999;
+  background:rgba(4,20,31,.92); border:1px solid var(--phos); color:var(--phos);
+  font-size:9px; letter-spacing:.14em; padding:5px 12px; border-radius:3px;
+  pointer-events:none; text-transform:uppercase; white-space:nowrap; box-shadow:0 2px 14px rgba(0,0,0,.5);
+  animation:netpulse 1.6s ease-in-out infinite}
+@keyframes netpulse{0%,100%{opacity:1}50%{opacity:.55}}
 </style>
 </head>
 <body>
 <noscript><div style="padding:20px;text-align:center;color:#ff5964;font-family:monospace">JavaScript est désactivé — le jeu ne peut pas fonctionner. Ouvrez ce fichier dans Chrome avec JS activé.</div></noscript>
 <div id="offline-bar" class="hidden">◌ Hors ligne — version en cache · classement et mises à jour en attente de réseau</div>
+<div id="netbar" class="hidden"></div>
 <div id="app">
   <header id="topbar">
     <svg class="clover-logo" viewBox="0 0 40 36" xmlns="http://www.w3.org/2000/svg" aria-label="Trèfle porte-bonheur">
@@ -1022,7 +1061,7 @@ button.bonus-flash{animation:bonusFlash .5s ease-in-out 3 !important}
 
   <main>
     <section id="scr-home" class="screen active">
-      <p class="version" id="upd-version" title="Vérifier les mises à jour">v2.84<span class="upd-dot hidden">●</span></p>
+      <p class="version" id="upd-version" title="Vérifier les mises à jour">v2.86<span class="upd-dot hidden">●</span></p>
       <div class="hero-sonar">
         <div class="beam"></div><div class="rings"></div><div class="core"></div>
         <span class="hs-blip" style="--a:52deg"></span>
@@ -1221,8 +1260,8 @@ button.bonus-flash{animation:bonusFlash .5s ease-in-out 3 !important}
         <div class="aide-item"><h3>⚓ LE BUT</h3><p>Coulez les <b>5 navires adverses</b> avant qu'il ne coule les vôtres. Chaque joueur amarre sa flotte (porte-avions 5, croiseur 4, frégate 3, sous-marin 3, torpilleur 2), puis les tirs alternent : un par tour, touché ou à l'eau.</p></div>
         <div class="aide-item"><h3>🎯 VISER</h3><p>La vue <b>RADAR</b> montre la grille ennemie pour choisir vos tirs ; la vue <b>MA FLOTTE</b> montre la vôtre, vos navires touchés et vos <b>batteries anti-drônes</b> (2, installées sur le croiseur et la frégate).</p></div>
         <div class="aide-item"><h3>🛰 DRONE FURTIF ×5</h3><p>Scanne la case visée + 4 adjacentes (croix). Navires révélés = <b>points verts</b>. ⚠ Les batteries ennemies <b>tirent et détruisent le drone</b> si la case visée est à <b>1 case ou moins</b> d'elles — visez plus loin ! Chaque navire coulé = <b>+1 drone</b> (tous les 4 coulés : <b>+1 missile</b> à la place).</p></div>
-        <div class="aide-item"><h3>🛰 SUPER DRONE</h3><p>À <b>7 drones en réserve</b>, le bouton devient SUPER DRONE : la zone de scan passe à <b>5 × 5</b> (25 cases). Une batterie située au bord de la zone (à 2 cases) reste silencieuse.</p></div>
-        <div class="aide-item"><h3>🎁 BONUS CACHÉS (CLASSIQUE)</h3><p>Après validation de votre flotte, <b>3 bonus</b> sont cachés au hasard sur VOTRE grille (cases vides). Si l'adversaire touche une case bonus — tir simple ou zone Stratus 3×3 — son tir est consommé mais il gagne : 🚀 <b>+1 missile Stratus</b> · 🛰 <b>+2 drones</b> (SUPER DRONE à 7) · 💎 <b>+200 points</b>. Vous voyez vos marques, lui ne voit rien.</p></div>
+        <div class="aide-item"><h3>🛰 SUPER DRONE</h3><p>À <b>7 drones en réserve</b> — ou avec une <b>charge SUPER DRONE 🛸</b> gagnée en bonus — le bouton devient SUPER DRONE : la zone de scan passe à <b>5 × 5</b> (25 cases). Une batterie située au bord de la zone (à 2 cases) reste silencieuse.</p></div>
+        <div class="aide-item"><h3>🎁 BONUS CACHÉS (CLASSIQUE)</h3><p>Après validation de votre flotte, <b>8 bonus</b> (2 de chaque sorte) sont cachés au hasard sur VOTRE grille — sur des cases vides, <b>jamais sous un navire</b>, et un navire repositionné ne peut pas les recouvrir. Si l'adversaire touche une case bonus — tir simple ou zone Stratus 3×3 — son tir est consommé mais il gagne : 🚀 <b>+1 missile Stratus</b> · 🛰 <b>+1 drone</b> · 🛸 <b>+1 SUPER DRONE</b> · 💎 <b>+200 points</b>. Vous voyez vos marques, lui ne voit rien… <b>sauf s'il survole la zone avec un drone</b> : l'icône du bonus apparaît alors sur son radar (tire dessus pour encaisser la récompense).</p></div>
         <div class="aide-item"><h3>🚀 MISSILE STRATUS ×2</h3><p>Frappe la case visée + les 8 cases autour (<b>zone 3 × 3</b>). Munition précieuse : ménagez-la, elle rapporte du score si elle est intacte.</p></div>
         <div class="aide-item"><h3>🎣 PLEINE MER</h3><p><b>12 bateaux de pêche</b> cachés près des flottes. Les toucher = <b>-1 vie</b> (3 vies par joueur). Ils apparaissent en bleu au drone : <b>NE TIREZ PAS DESSUS</b>.</p></div>
         <div class="aide-item"><h3>💀 DEATH</h3><p>Chaque tir est un missile 3 × 3 <b>illimité</b>. Pas de drone. Destruction massive.</p></div>
@@ -1459,7 +1498,7 @@ const store = {
         classique à remplacer manuellement, puis rouvrir le jeu.
    Pour publier une nouvelle version : mettre en ligne le nouveau
    Bataille.html + mettre à jour la clé « version » du manifeste. */
-const GAME_VERSION = '2.84';
+const GAME_VERSION = '2.86';
 const UPDATE_CFG = {
   url: 'bataille-update.json',   /* adresse du manifeste : chemin relatif (même dossier, jeu servi par un serveur) ou URL absolue (https://...) */
   page: '',                      /* lien manuel optionnel : page de téléchargement affichée si la vérification échoue */
@@ -1915,24 +1954,31 @@ function randomFleet(b) {
   }
 }
 
-/* ================= BONUS CACHÉS (★ v2.80 — mode Classique) =================
-   Après validation de la flotte, 3 bonus sont posés AU HASARD sur la grille
-   du joueur (cases vides uniquement). Si l'ADVERSAIRE touche une case bonus
-   (tir simple OU l'une des 9 cases d'un Stratus 3×3), son tir est consommé
-   mais IL GAGNE la récompense :
-     🚀 +1 missile Stratus · 🛰 +2 drones (SUPER DRONE dès 7) · 💎 +200 points
+/* ================= BONUS CACHÉS (★ v2.80 — mode Classique · v2.86 ×2) =================
+   Après validation de la flotte, 8 bonus (2 de chaque sorte) sont posés AU
+   HASARD sur la grille du joueur (cases vides uniquement, JAMAIS sous un
+   navire). Si l'ADVERSAIRE touche une case bonus (tir simple OU l'une des
+   9 cases d'un Stratus 3×3), son tir est consommé mais IL GAGNE la récompense :
+     🚀 +1 missile Stratus · 🛰 +1 drone · 🛸 +1 SUPER DRONE · 💎 +200 points
    Le bonus est consommé (une seule fois) et révélé sur le radar du chasseur.
-   Le propriétaire voit ses marques en permanence ; l'adversaire ne voit rien. */
+   Le propriétaire voit ses marques en permanence ; l'adversaire ne les voit
+   que s'il survole la zone avec un drone ou un SUPER DRONE (★ v2.86). */
 const BONUS_DEF = [
-  { type: 'missile', icon: '🚀', label: '+1 MISSILE STRATUS' },
-  { type: 'drone',   icon: '🛰',  label: '+2 DRONES FURTIFS' },
-  { type: 'points',  icon: '💎',  label: '+200 POINTS' },
+  { type: 'missile',    icon: '🚀', label: '+1 MISSILE STRATUS', count: 2 },
+  { type: 'drone',      icon: '🛰',  label: '+1 DRONE FURTIF',    count: 2 },
+  { type: 'superdrone', icon: '🛸',  label: '+1 SUPER DRONE',     count: 2 },
+  { type: 'points',     icon: '💎',  label: '+200 POINTS',        count: 2 },
 ];
 function rollBonuses(board) {
   const free = [];
   for (let i = 0; i < 100; i++) if (board.grid[i] === null) free.push(i);
   for (let i = free.length - 1; i > 0; i--) { const j = rnd(i + 1); const t = free[i]; free[i] = free[j]; free[j] = t; }
-  return BONUS_DEF.map((d, i) => ({ idx: free[i], type: d.type, found: false }));
+  /* ★ v2.86 : le double de bonus — 2 de chaque sorte, soit 8 au total
+     (file de types mélangée par l'ordre de BONUS_DEF, cases d'eau piochées
+     au hasard : aucune ne peut contenir un navire). */
+  const list = [];
+  BONUS_DEF.forEach(d => { for (let k = 0; k < (d.count || 1); k++) list.push(d.type); });
+  return list.slice(0, free.length).map((type, i) => ({ idx: free[i], type, found: false, spotted: false }));
 }
 function bonusAt(board, idx) {
   return (board.bonus || []).find(b => b.idx === idx && !b.found) || null;
@@ -1947,14 +1993,20 @@ function awardBonus(p, type) {
     logMsg('<b style="color:var(--red)">BONUS 🚀 DÉCOUVERT</b> — +1 MISSILE STRATUS');
   } else if (type === 'drone') {
     const before = S.stealthLeft[p] || 0;
-    S.stealthLeft[p] = before + 2;
+    S.stealthLeft[p] = before + 1;
     if (S.stealthLeft[p] >= 7 && before < 7) {
       logMsg('<b style="color:var(--red)">SUPER DRONE DÉBLOQUÉ</b> — 7 drones en stock : scan 5×5');
       if (p === currentPlayerIdx()) flashButton('btn-superdrone');
     }
     if (p === currentPlayerIdx()) updateStealthButton();
-    logMsg('<b style="color:var(--amber)">BONUS 🛰 DÉCOUVERT</b> — +2 DRONES FURTIFS');
+    logMsg('<b style="color:var(--amber)">BONUS 🛰 DÉCOUVERT</b> — +1 DRONE FURTIF');
     if (p === currentPlayerIdx()) flashButton('btn-stealth');
+  } else if (type === 'superdrone') {
+    /* ★ v2.86 : +1 SUPER DRONE — charge dédiée (scan 5×5 immédiat), même
+       quand le stock de drones simples est sous le seuil de 7. */
+    S.superDroneLeft[p] = (S.superDroneLeft[p] || 0) + 1;
+    if (p === currentPlayerIdx()) { updateStealthButton(); flashButton('btn-superdrone'); }
+    logMsg('<b style="color:var(--red)">BONUS 🛸 DÉCOUVERT</b> — +1 SUPER DRONE');
   } else if (type === 'points') {
     if (S.mode === 'online') S.stats.bonusPts = (S.stats.bonusPts || 0) + 200;
     else if (S.pstats) S.pstats[p].bonusPts = (S.pstats[p].bonusPts || 0) + 200;
@@ -1962,20 +2014,29 @@ function awardBonus(p, type) {
   }
   Sound.ready(); vib([40, 60, 40, 60, 120]);
 }
-/* Marques de bonus sur une grille : onlyFound=true → SEULEMENT les trouvés
-   (radar de l'attaquant) ; onlyFound=false → tous (grille du propriétaire). */
+/* Marques de bonus sur une grille : onlyFound=true → les trouvés (touchés)
+   ET les repérés par drone ★ v2.86 (radar de l'attaquant) ;
+   onlyFound=false → tous (grille du propriétaire). */
 function paintBonusMarks(g, board, onlyFound) {
   if (!board || !board.bonus || !g || !g.markers) return;
   board.bonus.forEach(b => {
-    if (onlyFound && !b.found) return;
+    if (onlyFound && !b.found && !b.spotted) return;
     const d = BONUS_DEF.find(x => x.type === b.type);
     const el = document.createElement('div');
-    el.className = 'bmark' + (b.found ? ' found' : '');
+    el.className = 'bmark' + (b.found ? ' found' : ' spotted');
     el.style.left = (b.idx % 10) * 10 + '%';
     el.style.top = ((b.idx / 10) | 0) * 10 + '%';
     el.textContent = d ? d.icon : '🎁';
     g.markers.appendChild(el);
   });
+}
+/* ★ v2.86 : repeint UNIQUEMENT les marques de bonus d'une grille (retire
+   les anciennes puis redessine) — sert quand un drone repère un bonus
+   sans toucher au reste (navires, marques de tir). */
+function repaintBonusMarks(g, board, onlyFound) {
+  if (!g || !g.markers) return;
+  g.markers.querySelectorAll('.bmark').forEach(el => el.remove());
+  paintBonusMarks(g, board, onlyFound);
 }
 /* Petit effet éphémère de révélation (icône qui pop sur la case) */
 function bonusRevealFx(g, x, y, type) {
@@ -2009,6 +2070,15 @@ function applyBonusReport(list) {
 const S = {
   screen: 'home', mode: null, role: null,
   peer: null, conn: null, dc: null, netToken: 0,
+  /* ★ v2.85 — ANTI-COUPURES : fiabilisation des échanges réseau.
+     msgSeq/seenIds : numérotation + dédoublonnage des messages.
+     pending : file d'attente des messages non accusés (renvoi auto).
+     peerCap : capacité de l'adversaire (2 = v2.85+ avec accusés).
+     lastSeen/hbTimer : battement de cœur (détection de liaison qui saute).
+     peerLeftAt/leftGrace : grâce de reconnexion quand l'adversaire décroche. */
+  msgSeq: 0, seenIds: [], peerCap: 0, pending: [],
+  lastSeen: 0, hbStart: 0, hbTimer: null,
+  peerLeftAt: 0, leftGrace: null, rejoinTries: 0, rejoining: false,
   code: '', board: null, radarB: null,
   boards: null, localTurn: 0,
   oppReady: false, readySent: false,
@@ -2027,6 +2097,7 @@ const S = {
   hofCache: null,          // cache local de secours
   /* Mode Furtif — indépendant pour chaque joueur, 5 utilisations */
   stealthLeft: [5, 5],         // [joueur 0, joueur 1] ou [me] en online
+  superDroneLeft: [0, 0], // ★ v2.86 : charges SUPER DRONE gagnées en bonus 🛸 (scan 5×5 sans le seuil de 7)
   stealthActive: false,   // true si en train de scanner
   stealthSuperActive: false, // ★ v2.67 : SUPER DRONE armé (bouton dédié, scan 5×5)
   stealthRevealing: false, // true pendant la révélation 1s
@@ -2087,24 +2158,33 @@ const HOF = {
     try { store.set('tc-hof-cache', JSON.stringify(list.slice(0, 50))); } catch (e) {}
   },
   async fetch() {
-    const to = HOF.timeout(8000);
-    try {
-      const r = await fetch(HOF.URL + '/latest', {
-        method: 'GET',
-        headers: { 'X-Access-Key': HOF.KEY, 'Cache-Control': 'no-cache' },
-        signal: to.signal,
-      });
-      if (!r.ok) throw new Error('HTTP ' + r.status);
-      const data = await r.json();
-      const list = Array.isArray(data.record) ? data.record : (data.record?.scores || []);
-      if (!Array.isArray(list)) throw new Error('format');
-      HOF.hofCache = list;
-      HOF.saveLocal(list);
-      return list;
-    } catch (e) {
-      console.warn('HOF fetch failed:', e);
-      return HOF.loadLocal();
-    } finally { to.stop(); }
+    /* ★ v2.85 : 3 tentatives (0 s / 1,2 s / 3 s) — une brève coupure ne
+       fait plus échouer le chargement du classement ; au pire, cache local. */
+    const waits = [0, 1200, 3000];
+    for (let i = 0; i < waits.length; i++) {
+      if (waits[i]) await new Promise(r => setTimeout(r, waits[i]));
+      const to = HOF.timeout(8000);
+      try {
+        const r = await fetch(HOF.URL + '/latest', {
+          method: 'GET',
+          headers: { 'X-Access-Key': HOF.KEY, 'Cache-Control': 'no-cache' },
+          signal: to.signal,
+        });
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        const data = await r.json();
+        const list = Array.isArray(data.record) ? data.record : (data.record?.scores || []);
+        if (!Array.isArray(list)) throw new Error('format');
+        HOF.hofCache = list;
+        HOF.saveLocal(list);
+        return list;
+      } catch (e) {
+        if (i === waits.length - 1) {
+          console.warn('HOF fetch failed:', e);
+          return HOF.loadLocal();
+        }
+      } finally { to.stop(); }
+    }
+    return HOF.loadLocal();
   },
   async submit(entry) {
     const to = HOF.timeout(8000);
@@ -2125,17 +2205,27 @@ const HOF = {
       list.sort((a, b) => computeScore(b) - computeScore(a) || a.fires - b.fires);
       /* 4. Garder top 50 */
       list = list.slice(0, 50);
-      /* 5. Sauvegarder en ligne */
-      const r = await fetch(HOF.URL, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Access-Key': HOF.KEY,
-        },
-        body: JSON.stringify({ scores: list }),
-        signal: to.signal,
-      });
-      if (!r.ok) throw new Error('HTTP ' + r.status);
+      /* 5. Sauvegarder en ligne — ★ v2.85 : 3 tentatives (0/1,2/3 s) */
+      let ok = false, lastErr = null;
+      for (let i = 0; i < 3 && !ok; i++) {
+        if (i) await new Promise(r => setTimeout(r, i === 1 ? 1200 : 3000));
+        const to2 = HOF.timeout(8000);
+        try {
+          const r = await fetch(HOF.URL, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-Access-Key': HOF.KEY,
+            },
+            body: JSON.stringify({ scores: list }),
+            signal: to2.signal,
+          });
+          if (!r.ok) throw new Error('HTTP ' + r.status);
+          ok = true;
+        } catch (err) { lastErr = err; }
+        finally { to2.stop(); }
+      }
+      if (!ok) throw (lastErr || new Error('réseau indisponible'));
       HOF.hofCache = list;
       HOF.saveLocal(list);
       return { ok: true, list };
@@ -2151,10 +2241,49 @@ const HOF = {
       local = local.slice(0, 50);
       HOF.saveLocal(local);
       HOF.hofCache = local;
+      /* ★ v2.85 : BOÎTE D'ENVOI — le score est mis en attente et repartira
+         TOUT SEUL au retour du réseau (event « online » / ouverture). */
+      HOF.queueLocal(entry);
       return { ok: false, list: local, error: e.message };
     } finally { to.stop(); }
   },
+  /* ★ v2.85 — BOÎTE D'ENVOI HOF : les scores non partis en ligne patientent
+     ici (localStorage) et sont renvoyés automatiquement dès que le réseau
+     revient — plus aucun score coincé pour toujours en local. */
+  outbox() {
+    try { return JSON.parse(store.get('tc-hof-outbox') || '[]'); } catch (e) { return []; }
+  },
+  queueLocal(entry) {
+    try {
+      const q = HOF.outbox().filter(e => e.id !== entry.id);
+      q.push(entry);
+      store.set('tc-hof-outbox', JSON.stringify(q.slice(0, 10)));
+    } catch (e) {}
+  },
+  unqueue(id) {
+    try { store.set('tc-hof-outbox', JSON.stringify(HOF.outbox().filter(e => e.id !== id))); } catch (e) {}
+  },
+  _flushing: false,
+  async flushOutbox() {
+    if (HOF._flushing || !navigator.onLine) return;
+    const q = HOF.outbox();
+    if (!q.length) return;
+    HOF._flushing = true;
+    for (const entry of q) {
+      const res = await HOF.submit(entry);
+      if (res.ok) {
+        HOF.unqueue(entry.id);
+        toast('Score envoyé au Hall of Fame (envoi retardé)', 'ok', 3200);
+      }
+    }
+    HOF._flushing = false;
+  },
 };
+
+/* ★ v2.85 : déclencheurs du renvoi automatique des scores en attente —
+   au retour du réseau et à l'ouverture du jeu. */
+window.addEventListener('online', () => setTimeout(HOF.flushOutbox, 2500));
+setTimeout(() => HOF.flushOutbox(), 4000);
 
 /* ★ v2.75 : détails de coulage d'un plateau — [[indexFLEET_DEF, coups], ...]
    pour les navires coulés. Repli : coups inconnu → longueur du navire. */
@@ -2368,9 +2497,9 @@ async function submitName() {
     /* Ouvrir le classement pour montrer la position */
     openHOF();
   } else {
-    toast('Score sauvegardé localement (réseau indisponible)', 'warn', 3000);
+    toast('Score en attente — il partira dès le retour du réseau', 'warn', 3200);
     S.lastResult.entryId = entry.id;
-    $('#end-hof-status').innerHTML = `<div class="submitted-badge" style="border-color:var(--amber);color:var(--amber);background:rgba(255,180,84,.08)">SAUVEGARDÉ LOCALEMENT</div>`;
+    $('#end-hof-status').innerHTML = `<div class="submitted-badge" style="border-color:var(--amber);color:var(--amber);background:rgba(255,180,84,.08)">EN ATTENTE DE RÉSEAU · ENVOI AUTO</div>`;
     $('#name-overlay').classList.add('hidden');
     openHOF();
   }
@@ -3126,7 +3255,8 @@ function isMyTurn() {
 }
 function enterBattle(firstIdx) {
   S.battle = true; S.busy = false;
-  S.stealthLeft = [5, 5]; S.stealthActive = false; S.stealthSuperActive = false; S.stealthRevealing = false;
+  if (S.mode === 'online') startHeartbeat();  /* ★ v2.85 : surveillance de la liaison */
+  S.stealthLeft = [5, 5]; S.stealthActive = false; S.stealthSuperActive = false; S.stealthRevealing = false; S.superDroneLeft = [0, 0];  /* ★ v2.86 : charges super gagnées en bonus remises à zéro */
   S.bigMissileLeft = [2, 2]; S.bigMissileActive = false;
   S.shipsSunkByPlayer = [0, 0];
   S.stealthLockoutTurns = [0, 0];
@@ -4334,8 +4464,11 @@ function flashButton(btnId) {
 function isSuperDrone(p) {
   /* ★ v2.67 : 7 drones ou plus en stock → le scan passe en zone 5×5
      (25 cases) au lieu de la croix (5 cases). Le stock est suivi par joueur,
-     la règle est donc identique en local et en réseau. */
-  return (S.stealthLeft[p != null ? p : currentPlayerIdx()] || 0) >= 7;
+     la règle est donc identique en local et en réseau.
+     ★ v2.86 : une charge SUPER DRONE gagnée en bonus 🛸 donne aussi accès
+     au scan 5×5, même avec moins de 7 drones simples. */
+  const pp = p != null ? p : currentPlayerIdx();
+  return (S.stealthLeft[pp] || 0) >= 7 || (S.superDroneLeft && (S.superDroneLeft[pp] || 0) > 0);
 }
 function isStealthAvailable() {
   /* Disponible si : >0 utilisations, porte-avions NON coulé (ou lockout expiré),
@@ -4391,7 +4524,8 @@ function isSuperDroneAvailable() {
      furtif simple armé ne bloque PAS : armer le SUPER DRONE le remplace. */
   if (!S.battle || S.stealthRevealing) return false;
   const p = currentPlayerIdx();
-  if (S.stealthLeft[p] <= 0) return false;
+  /* ★ v2.86 : disponible avec des drones simples OU une charge super 🛸 */
+  if (S.stealthLeft[p] <= 0 && (S.superDroneLeft[p] || 0) <= 0) return false;
   if (S.stealthLockoutTurns[p] > 0) return false;
   return isSuperDrone(p);
 }
@@ -4401,20 +4535,24 @@ function updateSuperDroneButton() {
   if (!btn || !cnt) return;
   const p = currentPlayerIdx();
   const stock = S.stealthLeft[p] || 0;
-  /* Compteur : nombre de SUPER scans possibles avant de repasser sous le
-     seuil de 7 drones (chaque scan, simple ou super, consomme 1 drone). */
-  cnt.textContent = '×' + Math.max(0, stock - 6);
+  const superLeft = (S.superDroneLeft && S.superDroneLeft[p]) || 0;
+  /* Compteur : nombre de SUPER scans possibles — charges bonus 🛸 PLUS les
+     drones simples au-dessus du seuil de 7 (chaque scan super consomme
+     d'abord une charge bonus, sinon 1 drone ; un scan simple consomme
+     toujours 1 drone). */
+  cnt.textContent = '×' + (Math.max(0, stock - 6) + superLeft);
   const ok = isSuperDroneAvailable();
   btn.disabled = !ok;
   btn.classList.toggle('on', S.stealthSuperActive);
-  if (S.stealthLeft[p] <= 0) {
+  if (stock <= 0 && superLeft <= 0) {
     btn.title = 'Plus de drone disponible';
   } else if (S.stealthLockoutTurns[p] > 0) {
     btn.title = 'Porte-avions coulé — drone verrouillé';
   } else if (!ok) {
     btn.title = 'SUPER DRONE — débloqué à 7 drones (stock : ' + stock + ')';
   } else {
-    btn.title = 'SUPER DRONE — scan 5×5 (25 cases)';
+    btn.title = superLeft > 0 ? 'SUPER DRONE — scan 5×5 (25 cases) · ' + superLeft + ' charge' + (superLeft > 1 ? 's' : '') + ' bonus 🛸'
+                              : 'SUPER DRONE — scan 5×5 (25 cases)';
   }
 }
 function toggleSuperDrone() {
@@ -4496,6 +4634,9 @@ function relocateShip(board, shipIdx) {
     if (i === shipIdx) continue;
     board.ships[i].cells.forEach(c => otherShipCells.add(xy(c.x, c.y)));
   }
+  /* ★ v2.86 : cases bonus non découvertes — un navire repositionné ne doit
+     JAMAIS recouvrir un bonus (il resterait invisible et incapturable). */
+  const bonusCells = new Set((board.bonus || []).filter(b => !b.found).map(b => b.idx));
   /* Ancienne position de la batterie (2e case du navire) */
   const oldBatteryIdx = ship.cells.length >= 2 ? xy(ship.cells[1].x, ship.cells[1].y) : -1;
   /* Essaie 200 positions aléatoires */
@@ -4510,7 +4651,7 @@ function relocateShip(board, shipIdx) {
       const cx = vert ? x : x + k;
       const cy = vert ? y + k : y;
       const idx = xy(cx, cy);
-      if (otherShipCells.has(idx) || shotCells.has(idx)) { valid = false; break; }
+      if (otherShipCells.has(idx) || shotCells.has(idx) || bonusCells.has(idx)) { valid = false; break; }
       newCells.push({ x: cx, y: cy });
     }
     if (!valid) continue;
@@ -4790,7 +4931,10 @@ function stealthScan(cx, cy) {
   S.stealthRevealing = true;
   const p = currentPlayerIdx();
   S.lastDroneSuper = isSuper;
-  S.stealthLeft[p]--;
+  /* ★ v2.86 : un scan SUPER consomme d'abord une charge bonus 🛸, sinon
+     1 drone simple (le seuil des 7 reste une autre voie d'accès). */
+  if (isSuper && (S.superDroneLeft[p] || 0) > 0) S.superDroneLeft[p]--;
+  else S.stealthLeft[p]--;
   /* ★ v2.65 HOF : drone consommé comptabilisé (barème : moins de drones
      utilisés = plus de points). En local → stats du joueur courant ;
      en ligne → mes stats. */
@@ -4926,6 +5070,7 @@ function stealthScan(cx, cy) {
        l'adversaire et les affiche en points bleus. */
     let hits = 0;
     let fishingHits = 0;
+    let bonusSpotted = 0;
     let centerHit = false;
     /* Récupère les bateaux de pêche de l'adversaire */
     const foeBoats = S.mode === 'local'
@@ -4951,8 +5096,18 @@ function stealthScan(cx, cy) {
         /* Bateau de pêche de l'adversaire → point bleu */
         showFishingBoatDetected(c.x, c.y);
         fishingHits++;
+      } else if (S.gameMode === 'classic') {
+        /* ★ v2.86 : bonus caché ennemi survolé par le drone (ou le SUPER
+           DRONE) → marqué « repéré » sur la vraie grille + halo ambre
+           permanent sur le radar. Repéré ≠ consommé : un tir sur la case
+           encaissera la récompense normalement. */
+        const bl = bonusAt(foeBoard, idx);
+        if (bl && !bl.spotted) { bl.spotted = true; bonusSpotted++; }
       }
     });
+    /* ★ v2.86 : bonus repérés → marques ambre sur le radar (juste les bonus,
+       sans repeindre navires/tirs) */
+    if (bonusSpotted > 0) repaintBonusMarks(GRIDS.radar, foeBoard, true);
     /* En mode online, le log sera déclenché par onDroneScanResult
        quand la réponse du défenseur arrivera. */
     if (S.mode !== 'online') {
@@ -4965,12 +5120,16 @@ function stealthScan(cx, cy) {
         : `<b style="color:var(--phos)">DRONE FURTIF</b>`];
       if (hits > 0) logParts.push(`<b class="k-ok">${hits} navire${hits > 1 ? 's' : ''}</b>`);
       if (fishingHits > 0) logParts.push(`<b style="color:#5d9eff">${fishingHits} bateau${fishingHits > 1 ? 'x' : ''} de pêche ⚠</b>`);
-      if (hits === 0 && fishingHits === 0) logParts.push('aucune cible');
+      if (bonusSpotted > 0) logParts.push(`<b style="color:#6cf5b8">${bonusSpotted} bonus repéré${bonusSpotted > 1 ? 's' : ''} 🎁</b>`);
+      if (hits === 0 && fishingHits === 0 && bonusSpotted === 0) logParts.push('aucune cible');
       logMsg(logParts.join(' — '));
       if (fishingHits > 0) {
         toast(`⚠ ${fishingHits} bateau${fishingHits > 1 ? 'x' : ''} de pêche détecté${fishingHits > 1 ? 's' : ''} — NE PAS TIRER DESSUS`, 'warn', 3000);
       }
-      vib(hits > 0 || fishingHits > 0 ? [40, 30, 40] : [30]);
+      if (bonusSpotted > 0) {
+        toast(`🎁 ${bonusSpotted} bonus ennemi${bonusSpotted > 1 ? 's' : ''} repéré${bonusSpotted > 1 ? 's' : ''} — tirez dessus pour l'encaisser`, 'ok', 3000);
+      }
+      vib(hits > 0 || fishingHits > 0 || bonusSpotted > 0 ? [40, 30, 40] : [30]);
     }
 
     if (hitBatteries.length > 0) {
@@ -5591,7 +5750,13 @@ function onDroneScanReceived(cx, cy, isSuper) {
     const scanFishing = (S.gameMode === 'fishermen' ? (S.myFishingBoats || []) : [])
       .filter(idx => scannedIdx.includes(idx))
       .map(idx => ({ x: idx % 10, y: (idx / 10) | 0 }));
-    send({ type: 'droneScanResult', hits: scanHits, fishing: scanFishing, cx, cy });
+    /* ★ v2.86 : renvoie aussi NOS bonus cachés survolés par le drone —
+       l'attaquant les voit en marques ambre sur son radar (repérés, pas
+       consommés). Champ optionnel : ignoré par un pair plus ancien. */
+    const scanBonus = (S.gameMode === 'classic' ? (myBoard.bonus || []) : [])
+      .filter(b => !b.found && scannedIdx.includes(b.idx))
+      .map(b => ({ x: b.idx % 10, y: (b.idx / 10) | 0, type: b.type }));
+    send({ type: 'droneScanResult', hits: scanHits, fishing: scanFishing, bonus: scanBonus, cx, cy });
     /* ★ v2.76 : miroir du barème — ce drone adverse compte dans SON score
        en direct (drone envoyé ; détection si ≥ 1 navire révélé, même règle
        que le compteur de l'attaquant onDroneScanResult). */
@@ -5790,7 +5955,7 @@ function onDroneScanReceived(cx, cy, isSuper) {
 }
 /* ★ Le défenseur a renvoyé les cases du scan qui contiennent un navire.
    Côté attaquant, on affiche les points verts sur le radar et on log. */
-function onDroneScanResult(hits, cx, cy, fishing) {
+function onDroneScanResult(hits, cx, cy, fishing, bonuses) {
   try {
     const g = GRIDS.radar;
     if (!g || !g.fx) return;
@@ -5811,17 +5976,34 @@ function onDroneScanResult(hits, cx, cy, fishing) {
       showFishingBoatDetected(h.x, h.y);
       fishingHits++;
     });
+    /* ★ v2.86 : bonus cachés adverses repérés par le drone → marques ambre
+       permanentes sur le radar (repérés, pas consommés). Repli : pair plus
+       ancien ou message sans champ bonus → aucun marque ajouté. */
+    let bonusHits = 0;
+    (bonuses || []).forEach(b => {
+      const idx = xy(b.x, b.y);
+      S.radarB.bonus = S.radarB.bonus || [];
+      if (!S.radarB.bonus.some(e => e.idx === idx)) {
+        S.radarB.bonus.push({ idx, type: b.type, found: false, spotted: true });
+        bonusHits++;
+      }
+    });
+    if (bonusHits > 0) repaintBonusMarks(GRIDS.radar, S.radarB, true);
     const logParts = [(S.lastDroneSuper
       ? `<b style="color:var(--red)">SUPER DRONE</b>`
       : `<b style="color:var(--phos)">DRONE FURTIF</b>`)];
     if (numHits > 0) logParts.push(`<b class="k-ok">${numHits} navire${numHits > 1 ? 's' : ''}</b>`);
     if (fishingHits > 0) logParts.push(`<b style="color:#5d9eff">${fishingHits} bateau${fishingHits > 1 ? 'x' : ''} de pêche ⚠</b>`);
-    if (numHits === 0 && fishingHits === 0) logParts.push('aucune cible');
+    if (bonusHits > 0) logParts.push(`<b style="color:#6cf5b8">${bonusHits} bonus repéré${bonusHits > 1 ? 's' : ''} 🎁</b>`);
+    if (numHits === 0 && fishingHits === 0 && bonusHits === 0) logParts.push('aucune cible');
     logMsg(logParts.join(' — '));
     if (fishingHits > 0) {
       toast(`⚠ ${fishingHits} bateau${fishingHits > 1 ? 'x' : ''} de pêche détecté${fishingHits > 1 ? 's' : ''} — NE PAS TIRER DESSUS`, 'warn', 3000);
     }
-    vib(numHits > 0 || fishingHits > 0 ? [40, 30, 40] : [30]);
+    if (bonusHits > 0) {
+      toast(`🎁 ${bonusHits} bonus ennemi${bonusHits > 1 ? 's' : ''} repéré${bonusHits > 1 ? 's' : ''} — tirez dessus pour l'encaisser`, 'ok', 3000);
+    }
+    vib(numHits > 0 || fishingHits > 0 || bonusHits > 0 ? [40, 30, 40] : [30]);
   } catch(e) { console.error('onDroneScanResult error:', e); }
 }
 /* ★ Notre drone a été détecté par la défense adverse. Côté attaquant,
@@ -6073,7 +6255,7 @@ function resetMatch() {
   S.hofPending = null; updateHofButton();  /* ★ v2.73 : plus d'inscription en attente au retour au port */
   S.turn = null; S.busy = false; S.localTurn = 0; P.player = 0;
   S.rematchMe = false; S.rematchOpp = false;
-  S.stealthLeft = [5, 5]; S.stealthActive = false; S.stealthSuperActive = false; S.stealthRevealing = false;
+  S.stealthLeft = [5, 5]; S.stealthActive = false; S.stealthSuperActive = false; S.stealthRevealing = false; S.superDroneLeft = [0, 0];  /* ★ v2.86 : charges super gagnées en bonus remises à zéro */
   S.bigMissileLeft = [2, 2]; S.bigMissileActive = false;
   S.shipsSunkByPlayer = [0, 0];
   S.stealthLockoutTurns = [0, 0];
@@ -6145,21 +6327,130 @@ function handoff(title, sub, cb) {
 const ALPHA = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 const genCode = () => Array.from({ length: 4 }, () => ALPHA[rnd(ALPHA.length)]).join('');
 const peerReady = () => !!(window.MeteredPeer || window.MeteredRealtime);
-/* Envoie un message via le SDK Metered Realtime.
-   Utilise S.peer.send (broadcast à tous les peers du canal — 1v1 = OK). */
-const send = o => {
+/* ★ v2.85 — ENVOI BRUT (sans file d'attente) : utilisé par le mécanisme
+   de renvoi lui-même et par les messages techniques (ack/ping/pong). */
+function rawSend(o) {
   const data = JSON.stringify(o);
   try {
-    if (S.peer && typeof S.peer.send === 'function') {
-      S.peer.send(data);
-      return;
-    }
-    if (S.dc && typeof S.dc.send === 'function') {
-      S.dc.send(data);
-      return;
-    }
+    if (S.peer && typeof S.peer.send === 'function') { S.peer.send(data); return true; }
+    if (S.dc && typeof S.dc.send === 'function') { S.dc.send(data); return true; }
   } catch (e) { console.error('[SEND] erreur:', e); }
+  return false;
+}
+/* Envoie un message via le SDK Metered Realtime.
+   Utilise S.peer.send (broadcast à tous les peers du canal — 1v1 = OK).
+   ★ v2.85 — ANTI-COUPURES : si l'adversaire est en v2.85+ (peerCap ≥ 2),
+   chaque message de jeu est NUMÉROTÉ et MIS EN FILE tant qu'il n'est pas
+   accusé — un tir ou un rapport envoyé pendant une micro-coupure est
+   renvoyé automatiquement (toutes les 1,6 s, jusqu'à 15 s) au lieu d'être
+   perdu en silence (avant : la partie restait figée sans explication). */
+const NET_NO_ACK = { ack: 1, ping: 1, pong: 1, hi: 1 };
+const send = o => {
+  if (S.mode === 'online' && !NET_NO_ACK[o.type]) {
+    o.cap = 2;   /* ★ v2.85 : annonce la capacité (accusés) à l'adversaire */
+    if (S.peerCap >= 2) {
+      if (o._id === undefined) { o._id = ++S.msgSeq; o._t = Date.now(); }
+      if (!S.pending.some(x => x._id === o._id)) S.pending.push(o);
+    }
+  }
+  return rawSend(o);
 };
+/* ★ v2.85 : pompe de renvoi — tous les messages non accusés repartent. */
+function pumpPending() {
+  if (!S.pending.length || S.mode !== 'online') return;
+  const now = Date.now();
+  S.pending = S.pending.filter(m => {
+    if (now - (m._t || now) > 15000) return false;      /* abandon : 15 s */
+    if (now - (m._last || 0) >= 1600) { m._last = now; rawSend(m); }
+    return true;
+  });
+}
+setInterval(pumpPending, 800);
+/* ★ v2.85 : renvoi IMMÉDIAT (au retour de la liaison). */
+function flushPending() {
+  const now = Date.now();
+  S.pending.forEach(m => { m._last = now - 1600; });
+}
+/* ★ v2.85 — BANDEAU DE LIAISON (réutilise le style du bandeau hors ligne). */
+function setNetBanner(txt) {
+  const b = $('#netbar');
+  if (!b) return;
+  if (txt) { b.textContent = '◌ ' + txt; b.classList.remove('hidden'); }
+  else b.classList.add('hidden');
+}
+/* ★ v2.85 — BATTEMENT DE CŒUR : pendant la bataille, un ping toutes les 3 s.
+   Silence total > 11 s → bandeau « SIGNAL FAIBLE » ; > 26 s → tentative de
+   reprise du canal (rejoindre à nouveau la fréquence). Compatible avec les
+   versions plus anciennes : sans réponse au ping, aucun bandeau faux
+   (on ne l'active que si l'adversaire parle le protocole v2.85). */
+function startHeartbeat() {
+  stopHeartbeat();
+  S.hbStart = Date.now();
+  S.hbTimer = setInterval(() => {
+    if (S.mode !== 'online' || !S.battle || S.peerCap < 2 || S.screen !== 'battle') return;
+    rawSend({ type: 'ping' });
+    const silent = Date.now() - Math.max(S.lastSeen, S.hbStart);
+    if (silent > 26000 && !S.rejoining && S.rejoinTries < 2) {
+      /* Reprise du canal : on décroche proprement puis on rejoint à nouveau. */
+      S.rejoining = true; S.rejoinTries++;
+      setNetBanner('LIAISON INTERROMPUE · REPRISE DU CANAL…');
+      try { S.peer?.leave?.(); S.peer?.disconnect?.(); } catch (e) {}
+      S.peer = null; S.dc = null;
+      joinMeteredRoom(S.code, S.role, null)
+        .then(() => { S.rejoining = false; flushPending(); })
+        .catch(() => { S.rejoining = false; });
+    } else if (silent > 11000) {
+      setNetBanner('SIGNAL FAIBLE · RECONNEXION…');
+    } else if (silent <= 11000) {
+      setNetBanner(null);
+    }
+  }, 3000);
+}
+function stopHeartbeat() {
+  if (S.hbTimer) { clearInterval(S.hbTimer); S.hbTimer = null; }
+}
+/* ★ v2.85 — GRÂCE DE RECONNEXION : l'adversaire a décroché (peer-left).
+   AVANT : la manche était annulée instantanément. DÉSORMAIS : 75 s de
+   grâce — micro-coupure WiFi/4G de l'adversaire ne tue plus la partie.
+   Retour de l'adversaire (peer-joined ou message) → reprise normale. */
+function armPeerGrace() {
+  clearPeerGrace();
+  S.peerLeftAt = Date.now();
+  setNetBanner('ADVERSAIRE INJOIGNABLE · RECONNEXION…');
+  S.leftGrace = setInterval(() => {
+    if (Date.now() - S.peerLeftAt > 75000) {
+      clearPeerGrace();
+      S.battle = false; S.conn = null; S.dc = null; stopHeartbeat();
+      $('#dead').classList.remove('hidden');
+    }
+  }, 1000);
+}
+function clearPeerGrace() {
+  if (S.leftGrace) { clearInterval(S.leftGrace); S.leftGrace = null; }
+  setNetBanner(null);
+}
+/* ★ v2.85 — L'ADVERSAIRE EST DE RETOUR (peer-joined pendant une partie) :
+   on rend la liaison, on renvoie la file d'attente, l'hôte resynchronise
+   le tour (il fait foi). */
+function handleNetReconnect() {
+  clearPeerGrace();
+  S.rejoinTries = 0;
+  toast('Liaison rétablie — reprise de la partie', 'ok', 2600);
+  flushPending();
+  if (S.role === 'host' && S.battle) send({ type: 'resync', turn: S.turn, ready: S.readySent });
+}
+/* ★ v2.85 — charge le SDK réseau à la demande (au clic HÉBERGER/CIBLER)
+   s'il n'a pas pu se charger à l'ouverture : 2 CDN, 9 s max, jamais de
+   blocage du reste du jeu. */
+function ensureSdk() {
+  return new Promise(resolve => {
+    if (peerReady()) return resolve(true);
+    toast('Chargement du module réseau…', 'warn', 5000);
+    if (typeof window.__srLoadSdk !== 'function') return resolve(false);
+    const t = setTimeout(() => resolve(false), 9000);
+    window.__srLoadSdk(0, ok => { clearTimeout(t); resolve(!!ok); });
+  });
+}
 /* ★ Crée un MeteredPeer et rejoint le canal = code de partie. */
 async function joinMeteredRoom(code, role, onPeerReady) {
   const MeteredPeerNS = window.MeteredPeer || window.MeteredRealtime;
@@ -6195,19 +6486,41 @@ async function joinMeteredRoom(code, role, onPeerReady) {
   /* Quand un autre peer rejoint le canal → on l'enregistre */
   peer.on('peer-joined', ({ peer: remote }) => {
     console.log('[' + role.toUpperCase() + '] Peer distant connecté:', remote.id);
+    const firstJoin = !S.remotePeer;
     S.dc = remote;
     S.remotePeer = remote;
+    /* ★ v2.85 : si ce n'est PAS la première connexion, c'est une
+       RECONNEXION (l'adversaire revient après une coupure) — on rend la
+       liaison et on reprend la partie au lieu de tout relancer. */
+    if (!firstJoin) {
+      if (S.battle) handleNetReconnect();
+      else { clearPeerGrace(); flushPending(); toast('Liaison rétablie', 'ok', 2200); }
+      return;
+    }
     if (onPeerReady) onPeerReady();
   });
   peer.on('peer-left', ({ peer: remote }) => {
     console.log('[' + role.toUpperCase() + '] Peer left:', remote?.id);
     if (S.screen === 'home') return;
     if (!$('#dead').classList.contains('hidden')) return;
-    S.battle = false; S.conn = null; S.dc = null;
-    $('#dead').classList.remove('hidden');
+    /* ★ v2.85 : PLUS DE MORT INSTANTANÉE — l'adversaire qui perd le réseau
+       5 secondes ne fait plus annuler la manche. 75 s de grâce pendant
+       lesquelles sa reconnexion est automatique (peer-joined, message ou
+       battement de cœur). Au-delà : overlay « liaison perdue » (comme avant). */
+    S.conn = null; S.dc = null;
+    armPeerGrace();
   });
   peer.on('state-change', ({ state }) => {
     console.log('[' + role.toUpperCase() + '] State:', state);
+    /* ★ v2.85 : signal visuel quand la liaison de signalisation faiblit
+       (au lieu d'un écran figé sans explication). */
+    const st = String(state || '').toUpperCase();
+    if (/DISCONNECT|FAILED|CLOSED|ERROR|LOST/.test(st) && S.screen !== 'home'
+        && $('#dead').classList.contains('hidden') && !S.leftGrace) {
+      setNetBanner('SIGNAL FAIBLE · RECONNEXION…');
+    } else if (/CONNECT|OPEN|READY|LIVE/.test(st) && !S.leftGrace) {
+      setNetBanner(null);
+    }
   });
   /* Rejoint le canal (= code à 4 caractères, préfixé pour unicité) */
   await peer.join('rafale-' + code);
@@ -6224,12 +6537,47 @@ function wireConn(pc, dc) {
   }
 }
 function onNet(m) {
+  /* ★ v2.85 — ANTI-COUPURES : chaque signe de vie repousse le silence.
+     Messages numérotés → accusé de réception + DÉDOUBLONNAGE (un tir
+     renvoyé par la file n'est jamais appliqué deux fois). */
+  S.lastSeen = Date.now();
+  if (m.cap >= 2 && S.peerCap < 2) S.peerCap = 2;
+  if (m._id !== undefined && m.type !== 'ack') {
+    if (S.peerCap >= 2) rawSend({ type: 'ack', _id: m._id });
+    if (S.seenIds.indexOf(m._id) !== -1) return;    /* déjà appliqué */
+    S.seenIds.push(m._id);
+    if (S.seenIds.length > 400) S.seenIds.splice(0, 200);
+  }
+  if (S.leftGrace && m.type !== 'ping' && m.type !== 'pong') {
+    /* Un vrai message de l'adversaire pendant la grâce = il est de retour. */
+    clearPeerGrace();
+    toast('Liaison rétablie — reprise de la partie', 'ok', 2600);
+  }
   switch (m.type) {
+    case 'ack': {
+      const i = S.pending.findIndex(x => x._id === m._id);
+      if (i !== -1) S.pending.splice(i, 1);
+      break;
+    }
+    case 'ping':
+      /* Battement de cœur v2.85 : on répond pour prouver que la liaison vit. */
+      rawSend({ type: 'pong' });
+      break;
+    case 'pong':
+      break;
+    case 'hi':
+      break;
+    case 'resync':
+      /* ★ v2.85 : après une reconnexion, l'HÔTE fait foi sur le tour. */
+      if (S.role === 'guest' && m.turn) S.turn = m.turn;
+      setNetBanner(null);
+      break;
     case 'hello':
       /* Le guest vient de se connecter et nous dit bonjour.
          Côté host : le toast "Adversaire connecté" est déjà affiché
          dans le callback onPeerReady de joinMeteredRoom (peer-joined).
          On évite ainsi un toast en double. */
+      if (S.peerCap >= 2) rawSend({ type: 'hi', cap: 2 });  /* ★ v2.85 : annonce notre capacité en retour */
       setTimeout(() => enterPlacement(), 400);
       break;
     case 'ready':
@@ -6259,8 +6607,9 @@ function onNet(m) {
       break;
     case 'droneScanResult':
       /* Le défenseur a renvoyé les cases du scan qui contenaient un navire
-         (+ bateaux de pêche détectés en mode Pleine mer) */
-      onDroneScanResult(m.hits || [], m.cx, m.cy, m.fishing);
+         (+ bateaux de pêche détectés en mode Pleine mer,
+         + bonus cachés repérés par le drone ★ v2.86) */
+      onDroneScanResult(m.hits || [], m.cx, m.cy, m.fishing, m.bonus);
       break;
     case 'shipRelocated':
       /* Le défenseur a déplacé son navire après avoir tiré sur notre drone */
@@ -6293,6 +6642,11 @@ function cleanupNet() {
   try { if (S.peer) { S.peer.leave?.(); S.peer.disconnect?.(); } } catch (e) {}
   try { if (S.dc && S.dc.close) { S.dc.close(); } } catch (e) {}
   S.conn = null; S.dc = null; S.peer = null; S.remotePeer = null;
+  /* ★ v2.85 : arrêt propre des mécanismes anti-coupures + remise à zéro
+     du protocole (numérotation, accusés, battement de cœur, grâce). */
+  stopHeartbeat(); clearPeerGrace();
+  S.msgSeq = 0; S.seenIds = []; S.peerCap = 0; S.pending = [];
+  S.lastSeen = 0; S.rejoining = false; S.rejoinTries = 0;
 }
 function goHome() {
   showScreen('scr-home');   // d'abord : évite l'overlay "liaison perdue"
@@ -6305,7 +6659,12 @@ function goHome() {
 /* ★ HOST : crée le code, rejoint le canal, attend le guest */
 $('#btn-host').addEventListener('click', async () => {
   Sound.tap(); Sound.unlock();
-  if (!peerReady()) { toast('WebRTC non supporté', 'bad', 3200); return; }
+  if (!peerReady()) {
+    /* ★ v2.85 : le module réseau se (re)charge à la demande — 2 CDN en
+       cascade. Plus besoin de recharger toute la page. */
+    const ok = await ensureSdk();
+    if (!ok) { toast('Module réseau indisponible — vérifiez la connexion', 'bad', 3600); return; }
+  }
   S.mode = 'online'; S.role = 'host';
   S.code = genCode();
   cleanupNet(); resetMatch();
@@ -6350,7 +6709,11 @@ $('#btn-connect').addEventListener('click', async () => {
   const code = $('#code-input').value.trim();
   if (code.length !== 4) { toast('Code à 4 caractères requis', 'warn', 1800); return; }
   Sound.tap(); Sound.unlock();
-  if (!peerReady()) { toast('WebRTC non supporté', 'bad', 3200); return; }
+  if (!peerReady()) {
+    /* ★ v2.85 : le module réseau se (re)charge à la demande — 2 CDN. */
+    const ok = await ensureSdk();
+    if (!ok) { toast('Module réseau indisponible — vérifiez la connexion', 'bad', 3600); return; }
+  }
   S.mode = 'online'; S.role = 'guest'; S.code = code;
   cleanupNet(); resetMatch();
   const token = ++S.netToken;
@@ -6487,13 +6850,14 @@ $('#btn-bigmissile').addEventListener('click', () => { Sound.tap(); toggleBigMis
     S.readySent = true;
     lockPlacement(true);
     refreshPlacement();
-    /* ★ v2.80 : Classique — 3 bonus cachés posés AU HASARD sur la grille
-       validée (cases vides uniquement). Récompense pour l'adversaire qui
-       les touchera : 🚀 +1 Stratus · 🛰 +2 drones · 💎 +200 points. */
+    /* ★ v2.80/v2.86 : Classique — 8 bonus cachés (2 de chaque) posés AU HASARD sur la grille
+       validée (cases vides uniquement, jamais sous un navire). Récompense
+       pour l'adversaire qui les touchera : 🚀 +1 Stratus · 🛰 +1 drone ·
+       🛸 +1 SUPER DRONE · 💎 +200 points. */
     if (S.gameMode === 'classic') {
       const bboard = S.boards[P.player];
       bboard.bonus = rollBonuses(bboard);
-      toast('3 bonus cachés posés sur votre grille', 'ok', 2200);
+      toast('8 bonus cachés posés sur votre grille', 'ok', 2200);
     }
     /* Mode Pleine mer : place les bateaux de pêche du joueur courant
        sur sa grille, avec animation. */
@@ -6541,12 +6905,12 @@ $('#btn-bigmissile').addEventListener('click', () => { Sound.tap(); toggleBigMis
   }
   S.readySent = true;
   lockPlacement(true);  /* ★ v2.70 : flotte envoyée → plus aucune modif possible */
-  /* ★ v2.80 : Classique — 3 bonus cachés posés AU HASARD sur ma grille
+  /* ★ v2.80/v2.86 : Classique — 8 bonus cachés (2 de chaque) posés AU HASARD sur ma grille
      (cases vides uniquement). Ils restent SECRETS : jamais transmis, ils
      sont révélés un par un quand l'adversaire les touche. */
   if (S.gameMode === 'classic') {
     S.board.bonus = rollBonuses(S.board);
-    toast('3 bonus cachés posés sur votre grille', 'ok', 2200);
+    toast('8 bonus cachés posés sur votre grille', 'ok', 2200);
   }
   send({ type: 'ready' });
   refreshPlacement();

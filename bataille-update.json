@@ -1,5 +1,5 @@
 {
-  "version": "2.81",
-  "file": "Bataille-v2.81.html",
-  "notes": "v2.81 — HALL OF FAME EN LIGNE RÉPARÉ : l'ancien serveur de scores avait disparu (404) — les scores ne partaient jamais en ligne. Nouveau serveur branché : « ENVOYER LE SCORE » publie maintenant au classement mondial. Au passage : délai max de 8 s sur l'envoi (plus de « ENVOI… » bloqué) et anti-doublons si l'envoi est répété."
+  "version": "2.86",
+  "file": "index.html",
+  "notes": "v2.86 — BONUS EN DOUBLE + SUPER DRONE 🛸 : 8 bonus cachés (2 de chaque sorte) au lieu de 3 — 🚀 +1 missile Stratus, 🛰 +1 drone (au lieu de 2), 💎 +200 points, et la nouvelle soucoupe 🛸 +1 SUPER DRONE : un scan 5×5 immédiat, sans attendre d'avoir 7 drones. Les bonus ne se posent jamais sous un navire, un navire repositionné ne peut plus les recouvrir, et les drones (simples et super) repèrent maintenant les bonus ennemis sur leur passage : halo ambre sur le radar, tirez dessus pour encaisser la récompense. Plein écran v2.84, anti-coupures v2.85 et mode hors ligne (Service Worker) restent bien en jeu."
 }
