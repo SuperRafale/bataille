@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
-<!-- SUPER RAFALE · BUILD 2.90 · fichier autonome (+ sw.js optionnel : mode hors ligne sur serveur web) -->
+<!-- SUPER RAFALE · BUILD 2.91 · fichier autonome (+ sw.js optionnel : mode hors ligne sur serveur web) -->
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -102,20 +102,42 @@ body::after{
 .hbtn:active{background:var(--panel)}
 /* ★ v2.88 : bouton SHOP — pastille sous les boutons plein écran / son (lien
    boutique Dassault Aviation, nouvel onglet). Masquée pendant le jeu
-   (placement / bataille) : la place est occupée par les barres de flotte. */
-#btn-shop{position:absolute; top:calc(100% + 3px); right:6px; height:28px; padding:0 13px;
+   (placement / bataille) : la place est occupée par les barres de flotte.
+   ★ v2.90 : cadre arrondi (pastille). */
+#btn-shop{position:absolute; top:calc(100% + 3px); right:6px; height:28px; padding:0 14px;
   display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:30;
   font-family:"Bebas Neue"; font-size:13px; letter-spacing:.2em; color:var(--phos);
-  text-decoration:none; border:1px solid rgba(108,245,184,.45); border-radius:2px;
+  text-decoration:none; border:1px solid rgba(108,245,184,.45); border-radius:14px;
   background:var(--deep)}
 #btn-shop:active{background:var(--panel)}
 body.scr-game #btn-shop{display:none}
+/* ★ v2.90 : AIDE + MÀJ en petites pastilles arrondies sous le trèfle
+   (haut gauche) — sortent du menu de l'accueil pour l'alléger. Mêmes
+   règles de masquage que SHOP pendant la partie. */
+#quick-links{position:absolute; top:calc(100% + 3px); left:6px; display:flex; gap:5px; z-index:30}
+#quick-links button{height:26px; padding:0 13px; font-family:inherit; font-size:12px;
+  letter-spacing:.05em; color:var(--txt); background:var(--deep); border:1px solid var(--line2);
+  border-radius:13px; cursor:pointer}
+#quick-links button:active{background:var(--panel)}
+body.scr-game #quick-links{display:none}
 main{flex:1; min-height:0; display:flex; flex-direction:column}
 .screen{display:none; flex:1; min-height:0; flex-direction:column; overflow:hidden}
 .screen.active{display:flex; animation:scrIn .3s ease-out}
 #scr-place.active{overflow-y:auto; overflow-x:hidden; -webkit-overflow-scrolling:touch}
 @keyframes scrIn{from{opacity:0; transform:translateY(8px)}to{opacity:1; transform:none}}
-#scr-home{align-items:center; justify-content:flex-start; text-align:center; gap:6px; padding:8px 0 4px}
+#scr-home{align-items:center; justify-content:center; text-align:center; gap:6px; padding:8px 0 4px}
+/* ★ v2.91 : page d'intro — Titre « SUPER RAFALE » → bouton GO → radar
+   (le clic GO débloque le son : la musique démarre à coup sûr ici). */
+#scr-intro{align-items:center; justify-content:center; text-align:center; gap:16px; padding:8px 0}
+#scr-intro .intro-title{font-size:min(13vw,64px); margin:0}
+#btn-go{font-size:26px; letter-spacing:.3em; padding:12px 58px; border-radius:26px;
+  clip-path:none; animation:goPulse 1.8s ease-in-out infinite}
+@keyframes goPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+@media (max-height:640px){
+  #scr-intro{gap:10px}
+  #scr-intro .intro-title{font-size:min(11vw,46px)}
+  #btn-go{font-size:20px; padding:9px 44px}
+}
 .hero-sonar{position:relative; width:200px; height:200px; border:1px solid var(--line); border-radius:50%; overflow:hidden; flex:none}
 /* ★ v2.74 : sous 640 px de hauteur, l accueil compacte son héro pour que
    le menu complet (bandeau carrière + COMMENT JOUER ? inclus) reste visible */
@@ -232,7 +254,12 @@ button.bonus-flash{animation:bonusFlash .5s ease-in-out 3 !important}
 .joinrow input:focus{border-color:var(--phos)}
 .joinrow .btn{flex:none; padding:12px 18px; font-size:18px}
 .hint{margin-top:16px; font-size:10px; color:var(--dim); letter-spacing:.06em; line-height:1.7; max-width:320px}
-.version{margin:2px 0 0; font-size:12px; font-weight:normal; color:var(--phos); letter-spacing:.26em; opacity:.95; text-shadow:0 0 6px rgba(108,245,184,.4); border:none; padding:0; border-radius:0; display:block}
+/* ★ v2.90 : la version vit dans le HEADER, à côté de « Dassault . 5gen »,
+   en rose-rouge (cliquable = vérification de mises à jour, pastille ● qui
+   pulse quand une mise à jour est disponible). */
+.version{margin:0 0 0 7px; font-family:"Bebas Neue"; font-size:13px; letter-spacing:.14em;
+  color:var(--red); text-shadow:0 0 6px rgba(255,89,100,.5); border:none; padding:0;
+  background:none; display:inline-flex; align-items:center}
 /* ★ v2.79 : mise à jour intégrée (badge cliquable + bouton menu + overlay) */
 #upd-version{cursor:pointer}
 #upd-version .upd-dot{color:var(--phos); opacity:1; margin-left:5px; animation:updPulse 1.6s infinite}
@@ -249,8 +276,8 @@ button.bonus-flash{animation:bonusFlash .5s ease-in-out 3 !important}
 #upd-overlay a{color:var(--phos)}
 /* ★ v2.76 : la version vit EN HAUT de l'accueil (1er élément de #scr-home,
    au-dessus du sonar). ★ v2.89 : agrandie + repositionnée au-dessus du Rafale.
-   ★ v2.90 : 17px était trop gros — ramenée à 12px (à peine grossie vs les
-   9px d'origine), halo adouci. */
+   ★ v2.90 : 17px était trop gros — ramenée à 12px. Puis déplacée dans le
+   header à côté de « Dassault . 5gen », en rose-rouge (voir règle .version). */
 
 /* ★ v2.80 : BONUS CACHÉS (Classique) — marques du propriétaire + révélations */
 .bmark{position:absolute; width:10%; height:10%; display:flex; align-items:center; justify-content:center;
@@ -1055,6 +1082,7 @@ button.bonus-flash{animation:bonusFlash .5s ease-in-out 3 !important}
       <circle cx="20" cy="18" r="1.1" fill="#6cf5b8"/>
     </svg>
     <div class="brand">Dassault . 5gen</div>
+    <p class="version" id="upd-version" title="Vérifier les mises à jour">v2.91<span class="upd-dot hidden">●</span></p>
     <div id="hstat"><span class="dot"></span><span id="hstat-t">HORS LIGNE</span></div>
     <button class="hbtn on" id="btn-fullscreen" aria-label="Plein écran">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
@@ -1071,11 +1099,165 @@ button.bonus-flash{animation:bonusFlash .5s ease-in-out 3 !important}
       </svg>
     </button>
     <a id="btn-shop" href="https://www.thestore-dassault-aviation.com/" target="_blank" rel="noopener noreferrer" aria-label="Boutique Dassault Aviation">SHOP</a>
+    <div id="quick-links">
+      <button id="btn-aide" aria-label="Aide">Aide</button>
+      <button id="btn-update" aria-label="Vérifier les mises à jour">MàJ</button>
+    </div>
   </header>
 
   <main>
-    <section id="scr-home" class="screen active">
-      <p class="version" id="upd-version" title="Vérifier les mises à jour">v2.90<span class="upd-dot hidden">●</span></p>
+    <!-- ★ v2.91 : PAGE D'INTRO — le clic sur GO est le geste utilisateur
+         qui débloque le son : la musique démarre ICI, à coup sûr. -->
+    <section id="scr-intro" class="screen active">
+      <h1 class="title intro-title">SUPER <span>RAFALE</span></h1>
+      <button class="btn primary intro-go" id="btn-go">GO</button>
+      <div class="hero-sonar">
+        <div class="beam"></div><div class="rings"></div><div class="core"></div>
+        <span class="hs-blip" style="--a:52deg"></span>
+        <span class="hs-blip" style="--a:141deg"></span>
+        <span class="hs-blip hostile" style="--a:236deg"></span>
+        <span class="hs-blip" style="--a:312deg"></span>
+        <!-- Rafale vu du dessus — silhouette canard-delta ramassée -->
+        <svg class="rafale-logo" viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="rafGrad-i" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#8aa3b0"/>
+              <stop offset="50%" stop-color="#5d7f8f"/>
+              <stop offset="100%" stop-color="#2a4452"/>
+            </linearGradient>
+            <linearGradient id="cockGrad-i" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#6cf5b8"/>
+              <stop offset="100%" stop-color="#0d2c22"/>
+            </linearGradient>
+          </defs>
+          <!-- Ombre portée (suit la queue raccourcie) -->
+          <ellipse cx="100" cy="195" rx="45" ry="5" fill="rgba(0,0,0,.5)"/>
+
+          <!-- Ailes delta : mêmes angles que les canards (42°/42°/96°), proportions conservées -->
+          <path d="M 100 95 L 35.36 166.79 L 100 160 Z"
+                fill="url(#rafGrad-i)" stroke="#1e4a5e" stroke-width="1.5"/>
+          <path d="M 100 95 L 164.64 166.79 L 100 160 Z"
+                fill="url(#rafGrad-i)" stroke="#1e4a5e" stroke-width="1.5"/>
+          <!-- Nervures internes des ailes (vers le centre) -->
+          <line x1="100" y1="100" x2="67.68" y2="130.90" stroke="#1e4a5e" stroke-width="0.4" opacity="0.4"/>
+          <line x1="100" y1="100" x2="132.32" y2="130.90" stroke="#1e4a5e" stroke-width="0.4" opacity="0.4"/>
+          <line x1="100" y1="160" x2="100" y2="195" stroke="#1e4a5e" stroke-width="0.4" opacity="0.4"/>
+
+          <!-- Canards : triangles 20°/50°/110° avec pointes externes coupées
+               Ailes réduites de 30% en largeur ET en longueur (plus compactes). -->
+          <path d="M 90 80 L 72 103 L 75.5 105 L 90 101 Z"
+                fill="#5d7f8f" stroke="#1e4a5e" stroke-width="1"/>
+          <path d="M 110 80 L 128 103 L 124.5 105 L 110 101 Z"
+                fill="#5d7f8f" stroke="#1e4a5e" stroke-width="1"/>
+          <!-- Ligne de nervure visible des canards -->
+          <line x1="88" y1="88" x2="79" y2="100" stroke="#9db4c0" stroke-width="0.4" opacity="0.5"/>
+          <line x1="112" y1="88" x2="121" y2="100" stroke="#9db4c0" stroke-width="0.4" opacity="0.5"/>
+
+          <!-- Fuselage central : nez plus court, base 8px, angle ~25° -->
+          <path d="M 96 55 L 100 37 L 104 55 L 116 178 Q 100 188 84 178 Z"
+                fill="url(#rafGrad-i)" stroke="#1e4a5e" stroke-width="1.5"/>
+          <!-- Entrées d'air latérales -->
+          <path d="M 90 95 L 84 115 L 90 125 Z M 110 95 L 116 115 L 110 125 Z"
+                fill="#0a1a22"/>
+          <!-- Verrière cockpit (verre teint) -->
+          <path d="M 93 75 Q 100 69 107 75 L 106 97 Q 100 103 94 97 Z"
+                fill="url(#cockGrad-i)" stroke="#6cf5b8" stroke-width="1"/>
+          <!-- Ligne médiane du fuselage -->
+          <line x1="100" y1="105" x2="100" y2="180" stroke="#1e4a5e" stroke-width="0.5" opacity="0.5"/>
+
+          <!-- Dérive verticale (suit la queue raccourcie) -->
+          <path d="M 95 150 L 100 180 L 105 150 Z"
+                fill="#5d7f8f" stroke="#1e4a5e" stroke-width="1"/>
+
+          <!-- Détails : missiles sous les ailes (repositionnés sous les nouvelles ailes) -->
+          <rect x="55" y="150" width="3" height="14" fill="#ff5964" rx="1.5"/>
+          <rect x="142" y="150" width="3" height="14" fill="#ff5964" rx="1.5"/>
+          <rect x="70" y="148" width="3" height="12" fill="#ffb454" rx="1.5"/>
+          <rect x="127" y="148" width="3" height="12" fill="#ffb454" rx="1.5"/>
+
+          <!-- DOUBLE RÉACTEUR 3D — deux tuyères SNECMA M88 côte à côte -->
+          <!-- Réacteur gauche : bord extérieur (cylindre vu de 3/4) -->
+          <ellipse cx="95" cy="185" rx="7" ry="8" fill="#2a4452" stroke="#1e4a5e" stroke-width="1"/>
+          <!-- Profondeur tuyère gauche (anneau sombre) -->
+          <ellipse cx="95" cy="185" rx="4.5" ry="5.5" fill="#0a1a22" stroke="#1e4a5e" stroke-width="0.5"/>
+          <!-- Cœur incandescent gauche -->
+          <ellipse cx="95" cy="185" rx="2.5" ry="3" fill="#6cf5b8" opacity="0.95"/>
+          <!-- Reflet métallique gauche -->
+          <ellipse cx="93.5" cy="183.5" rx="1.2" ry="1.5" fill="#fff" opacity="0.85"/>
+
+          <!-- Réacteur droit : bord extérieur -->
+          <ellipse cx="105" cy="185" rx="7" ry="8" fill="#3a5563" stroke="#1e4a5e" stroke-width="1"/>
+          <!-- Profondeur tuyère droite -->
+          <ellipse cx="105" cy="185" rx="4.5" ry="5.5" fill="#0a1a22" stroke="#1e4a5e" stroke-width="0.5"/>
+          <!-- Cœur incandescent droit -->
+          <ellipse cx="105" cy="185" rx="2.5" ry="3" fill="#6cf5b8" opacity="0.95"/>
+          <!-- Reflet métallique droit -->
+          <ellipse cx="103.5" cy="183.5" rx="1.2" ry="1.5" fill="#fff" opacity="0.85"/>
+
+          <!-- Flammes jumelles (effet de postcombustion 3D) -->
+          <ellipse cx="95" cy="198" rx="3.5" ry="9" fill="#6cf5b8" opacity="0.65"/>
+          <ellipse cx="95" cy="195" rx="1.8" ry="5" fill="#fff" opacity="0.85"/>
+          <ellipse cx="105" cy="198" rx="3.5" ry="9" fill="#6cf5b8" opacity="0.65"/>
+          <ellipse cx="105" cy="195" rx="1.8" ry="5" fill="#fff" opacity="0.85"/>
+          <!-- Halo lumineux commun -->
+          <ellipse cx="100" cy="192" rx="10" ry="4" fill="#6cf5b8" opacity="0.18"/>
+
+          <!-- Inscription "RC" sur l'aile droite (déplacée de 3px droite) -->
+          <text x="136" y="146" font-family="IBM Plex Mono, monospace" font-size="7"
+                font-weight="600" fill="#020b12"
+                transform="rotate(42 136 146)" text-anchor="middle"
+                style="letter-spacing: 0">RC</text>
+        </svg>
+        <!-- Drone de combat : triangle 3D avec profondeur -->
+        <svg class="drone-logo" viewBox="0 0 80 100" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="droneTop-i" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#c9dde6"/>
+              <stop offset="40%" stop-color="#8aa3b0"/>
+              <stop offset="100%" stop-color="#3a5563"/>
+            </linearGradient>
+            <linearGradient id="droneSide-i" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#5d7f8f"/>
+              <stop offset="100%" stop-color="#1e4a5e"/>
+            </linearGradient>
+            <linearGradient id="droneRight-i" x1="1" y1="0" x2="0" y2="0">
+              <stop offset="0%" stop-color="#9db4c0"/>
+              <stop offset="100%" stop-color="#2a4452"/>
+            </linearGradient>
+          </defs>
+
+          <!-- Aile gauche (face éclairée, dégradé haut-bas) -->
+          <path d="M 40 15 L 8 70 L 40 65 Z"
+                fill="url(#droneTop-i)" stroke="#1e4a5e" stroke-width="0.8"/>
+          <!-- Aile droite (face ombrée, dégradé latéral) -->
+          <path d="M 40 15 L 72 70 L 40 65 Z"
+                fill="url(#droneRight-i)" stroke="#1e4a5e" stroke-width="0.8"/>
+
+          <!-- Ligne de séparation centrale (arête 3D) -->
+          <line x1="40" y1="15" x2="40" y2="65" stroke="#1e4a5e" stroke-width="0.6" opacity="0.7"/>
+
+          <!-- Coins relevés aux bouts d'ailes (effet 3D) -->
+          <path d="M 8 70 L 6 67 L 12 70 Z" fill="#9db4c0" stroke="#1e4a5e" stroke-width="0.4"/>
+          <path d="M 72 70 L 74 67 L 68 70 Z" fill="#3a5563" stroke="#1e4a5e" stroke-width="0.4"/>
+
+          <!-- Éclairage supérieur de l'aile gauche (reflet) -->
+          <path d="M 40 18 L 20 55 L 35 60 Z" fill="#c9dde6" opacity="0.35"/>
+          <!-- Ombre inférieure de l'aile droite (profondeur) -->
+          <path d="M 60 55 L 70 65 L 42 62 Z" fill="#1e4a5e" opacity="0.3"/>
+
+          <!-- Réacteur arrière (flamme) sous le triangle -->
+          <ellipse cx="40" cy="73" rx="5" ry="10" fill="#6cf5b8" opacity="0.75"/>
+          <ellipse cx="40" cy="71" rx="2.5" ry="5" fill="#fff" opacity="0.9"/>
+
+          <!-- Trail (sillage) lumineux -->
+          <circle cx="40" cy="87" r="0.9" fill="#6cf5b8" opacity="0.55"/>
+          <circle cx="40" cy="91" r="0.6" fill="#6cf5b8" opacity="0.3"/>
+          <circle cx="40" cy="94" r="0.4" fill="#6cf5b8" opacity="0.15"/>
+        </svg>
+      </div>
+    </section>
+
+    <section id="scr-home" class="screen">
       <div class="hero-sonar">
         <div class="beam"></div><div class="rings"></div><div class="core"></div>
         <span class="hs-blip" style="--a:52deg"></span>
@@ -1220,7 +1402,6 @@ button.bonus-flash{animation:bonusFlash .5s ease-in-out 3 !important}
           <circle cx="40" cy="94" r="0.4" fill="#6cf5b8" opacity="0.15"/>
         </svg>
       </div>
-      <h1 class="title">SUPER <span>RAFALE</span></h1>
       <p class="tagline-rotate" id="tagline-rotate">Le meilleur avion de combat de tous les temps</p>
       <div id="career-strip" class="hidden"></div>
       <div class="menu">
@@ -1233,8 +1414,6 @@ button.bonus-flash{animation:bonusFlash .5s ease-in-out 3 !important}
           <button class="btn" id="btn-connect">CIBLER</button>
         </div>
         <button class="btn ghost" id="btn-mode-select">MODE DE JEU : <span id="mode-display">CLASSIQUE</span></button>
-        <button class="btn ghost" id="btn-aide">COMMENT JOUER ?</button>
-        <button class="btn ghost" id="btn-update">VÉRIFIER LES MISES À JOUR</button>
         <div class="joinpair">
           <button class="btn ghost" id="btn-hof">HALL OF FAME</button>
           <button class="btn ghost" id="btn-quit-game" style="color:var(--red); border-color:rgba(255,89,100,.3)">QUITTER</button>
@@ -1531,7 +1710,7 @@ const store = {
         classique à remplacer manuellement, puis rouvrir le jeu.
    Pour publier une nouvelle version : mettre en ligne le nouveau
    Bataille.html + mettre à jour la clé « version » du manifeste. */
-const GAME_VERSION = '2.90';
+const GAME_VERSION = '2.91';
 const UPDATE_CFG = {
   url: 'bataille-update.json',   /* adresse du manifeste : chemin relatif (même dossier, jeu servi par un serveur) ou URL absolue (https://...) */
   page: '',                      /* lien manuel optionnel : page de téléchargement affichée si la vérification échoue */
@@ -2725,7 +2904,9 @@ function introMusicInit() {
   } catch (e) { introMusic = null; }
 }
 function introMusicSync() {
-  const want = !Sound.muted && typeof S !== 'undefined' && S.screen === 'home';
+  /* ★ v2.91 : la musique couvre aussi la page d'intro (elle démarre au clic
+     GO, geste qui débloque le son, et continue sur l'accueil). */
+  const want = !Sound.muted && typeof S !== 'undefined' && (S.screen === 'home' || S.screen === 'intro');
   if (want) {
     if (!introMusic) introMusicInit();
     if (introMusic && introMusic.paused) introMusic.play().catch(() => {});
@@ -2734,9 +2915,12 @@ function introMusicSync() {
   }
 }
 /* Réessaie à chaque interaction : certains navigateurs n'autorisent le son
-   qu'après un geste de l'utilisateur. */
-document.addEventListener('pointerdown', introMusicSync, { passive: true });
-document.addEventListener('touchstart', introMusicSync, { passive: true });
+   qu'après un geste de l'utilisateur. ★ v2.90 : + touchend (iOS débloque
+   parfois uniquement à la FIN du toucher), mousedown et click (capture)
+   pour couvrir tous les navigateurs. */
+['pointerdown', 'touchstart', 'touchend', 'mousedown'].forEach(ev =>
+  document.addEventListener(ev, introMusicSync, { passive: true }));
+document.addEventListener('click', introMusicSync, true);
 document.addEventListener('keydown', introMusicSync);
 document.addEventListener('pageshow', () => setTimeout(introMusicSync, 50));
 document.addEventListener('visibilitychange', () => {
@@ -2750,7 +2934,7 @@ function showScreen(id) {
   S.screen = id.replace('scr-', '');
   introMusicSync();  /* ★ v2.89 : musique d'intro sur l'accueil, stoppée ailleurs */
   if (id === 'scr-home') updateCareerStrip();  /* ★ v2.74 : bandeau carrière */
-  $('#btn-quit').classList.toggle('on', S.screen !== 'home');
+  $('#btn-quit').classList.toggle('on', S.screen !== 'home' && S.screen !== 'intro');
   /* ★ v2.88 : masque le bouton SHOP sur les écrans de jeu (placement/bataille)
      — la zone sous les boutons du header y est occupée par le titre de
      placement et les barres de flotte (cœurs de vie en Pleine mer). */
@@ -7207,15 +7391,32 @@ if (Sound.muted) {
 }
 switchView('radar');
 resetMatch();
-showScreen('scr-home');
+showScreen('scr-intro');  /* ★ v2.91 : la page d'intro (Titre/GO/radar) accueille le joueur */
 introMusicInit();
-introMusicSync();  /* ★ v2.89 : essai de lecture DÈS l'affichage de l'accueil */
+introMusicSync();  /* ★ v2.89 : essai de lecture dès l'affichage (page d'intro) */
+/* ★ v2.90 : réessais automatiques après le chargement — le 1er play() peut
+   être refusé (politique autoplay) ou partir avant la fin du décodage du
+   MP3 embarqué : on relance l'essai plusieurs fois, silencieusement. Si le
+   navigateur finit par l'autoriser (engagement mémorisé, décodage terminé),
+   la musique démarre sans aucun clic. Sinon, le 1er toucher n'importe où
+   (pointerdown/touchend/click… ci-dessus) la lance. */
+[400, 1000, 2500, 5000].forEach(ms => setTimeout(introMusicSync, ms));
+
+/* ★ v2.91 : bouton GO de la page d'intro — LE geste utilisateur qui débloque
+   le son. La musique démarre ici à coup sûr, puis on rejoint l'accueil. */
+$('#btn-go').addEventListener('click', () => {
+  Sound.unlock();
+  Sound.tap();
+  introMusicSync();                       /* play() dans le geste → autorisé */
+  setTimeout(() => showScreen('scr-home'), 700);  /* petit beat musical */
+});
 
 /* ★ v2.79 : vérification automatique silencieuse au lancement
    (uniquement sur l'accueil, jamais bloquante ; désactivable via tc-upd-auto = '0') */
 if (UPDATE_CFG.auto && store.get('tc-upd-auto') !== '0') {
   setTimeout(() => {
-    if ($('#scr-home') && $('#scr-home').classList.contains('active')) checkUpdate(false);
+    if (($('#scr-home') && $('#scr-home').classList.contains('active')) ||
+        ($('#scr-intro') && $('#scr-intro').classList.contains('active'))) checkUpdate(false);
   }, 2500);
 }
 

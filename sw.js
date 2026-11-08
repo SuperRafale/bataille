@@ -1,4 +1,4 @@
-/* SUPER RAFALE · SERVICE WORKER · BUILD 2.90
+/* SUPER RAFALE · SERVICE WORKER · BUILD 2.91
    Mode hors ligne pour le jeu publié sur un serveur web (GitHub Pages…).
    Le jeu est un fichier unique (index.html) + un petit manifeste
    (bataille-update.json) : les deux sont mis en cache à l'installation.
@@ -16,7 +16,7 @@
    dessous (même numéro que le BUILD du jeu) → le navigateur détecte le
    sw.js modifié, l'installe, purge l'ancien cache à l'activation. */
 
-const SW_VERSION = 'superrafale-v2.90';
+const SW_VERSION = 'superrafale-v2.91';
 const PRECACHE = ['./', './bataille-update.json'];
 
 /* INSTALLATION : précache du jeu + manifeste, puis prise de service
