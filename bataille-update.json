@@ -1,5 +1,0 @@
-{
-  "version": "2.91",
-  "file": "index.html",
-  "notes": "v2.91 — PAGE D'INTRO : à l'ouverture, le jeu affiche le titre « SUPER RAFALE », le bouton GO et, en dessous, une copie du radar. Le clic sur GO est LE geste qui débloque le son : LA MUSIQUE DÉMARRE À COUP SÛR ICI (les navigateurs interdisent la lecture avant le premier geste — règle Chrome/Safari), puis l'accueil s'affiche avec son radar d'origine (Rafale + drone) au-dessus du menu. Inchangé : musique « Invisibility » en boucle sur l'intro et l'accueil ; pastilles « Aide » et « MàJ » sous le trèfle, version rose-rouge à côté de « Dassault . 5gen », SHOP à cadre arrondi, écran CRÉER PARTIE avec choix LOCAL / INTERNET (2.90) ; « EN LIGNE » (2.89) ; radar des drones en icône ambre sans anneau vert (2.88) ; 8 bonus cachés dont le SUPER DRONE 🛸 (2.87) ; PLEIN ÉCRAN infaillible (2.84) ; ANTI-COUPURES réseau (2.85) ; HORS LIGNE par Service Worker (2.82)."
-}
