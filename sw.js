@@ -1,4 +1,4 @@
-/* SUPER RAFALE · SERVICE WORKER · BUILD 2.93
+/* SUPER RAFALE · SERVICE WORKER · BUILD 2.94
    Mode hors ligne pour le jeu publié sur un serveur web (GitHub Pages…).
    Le jeu est un fichier unique (index.html), mis en cache à l'installation.
 
@@ -15,7 +15,7 @@
    dessous (même numéro que le BUILD du jeu) → le navigateur détecte le
    sw.js modifié, l'installe, purge l'ancien cache à l'activation. */
 
-const SW_VERSION = 'superrafale-v2.93';
+const SW_VERSION = 'superrafale-v2.94';
 const PRECACHE = ['./'];
 
 /* INSTALLATION : précache du jeu, puis prise de service

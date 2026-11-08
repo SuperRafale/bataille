@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
-<!-- SUPER RAFALE · BUILD 2.93 · fichier autonome (+ sw.js optionnel : mode hors ligne sur serveur web) -->
+<!-- SUPER RAFALE · BUILD 2.94 · fichier autonome (+ sw.js optionnel : mode hors ligne sur serveur web) -->
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -1037,7 +1037,7 @@ button.bonus-flash{animation:bonusFlash .5s ease-in-out 3 !important}
       <circle cx="20" cy="18" r="1.1" fill="#6cf5b8"/>
     </svg>
     <div class="brand">Dassault . 5gen</div>
-    <p class="version" id="upd-version">v2.93</p>
+    <p class="version" id="upd-version">v2.94</p>
     <div id="hstat"><span class="dot"></span><span id="hstat-t">HORS LIGNE</span></div>
     <button class="hbtn on" id="btn-fullscreen" aria-label="Plein écran">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
@@ -1427,7 +1427,7 @@ button.bonus-flash{animation:bonusFlash .5s ease-in-out 3 !important}
         <div class="aide-item"><h3>🎯 VISER</h3><p>La vue <b>RADAR</b> montre la grille ennemie pour choisir vos tirs ; la vue <b>MA FLOTTE</b> montre la vôtre, vos navires touchés et vos <b>batteries anti-drônes</b> (2, installées sur le croiseur et la frégate).</p></div>
         <div class="aide-item"><h3>🛰 DRONE FURTIF ×5</h3><p>Scanne la case visée + 4 adjacentes (croix). Navires révélés = <b>points verts</b>. ⚠ Les batteries ennemies <b>tirent et détruisent le drone</b> si la case visée est à <b>1 case ou moins</b> d'elles — visez plus loin ! Chaque navire coulé = <b>+1 drone</b> (tous les 4 coulés : <b>+1 missile</b> à la place).</p></div>
         <div class="aide-item"><h3>🛰 SUPER DRONE</h3><p>À <b>7 drones en réserve</b> — ou avec une <b>charge SUPER DRONE 🛸</b> gagnée en bonus — le bouton devient SUPER DRONE : la zone de scan passe à <b>5 × 5</b> (25 cases). Une batterie située au bord de la zone (à 2 cases) reste silencieuse.</p></div>
-        <div class="aide-item"><h3>🎁 BONUS CACHÉS (CLASSIQUE)</h3><p>Après validation de votre flotte, <b>8 bonus</b> (2 de chaque sorte) sont cachés au hasard sur VOTRE grille — sur des cases vides, <b>jamais sous un navire</b>, et un navire repositionné ne peut pas les recouvrir. Si l'adversaire touche une case bonus — tir simple ou zone Stratus 3×3 — son tir est consommé mais il gagne : 🚀 <b>+1 missile Stratus</b> · 🛰 <b>+1 drone</b> · 🛸 <b>+1 SUPER DRONE</b> · 💎 <b>+200 points</b>. Vous voyez vos marques, lui ne voit rien… <b>sauf s'il survole la zone avec un drone</b> : l'icône du bonus apparaît alors un instant sur son radar — <b>en ambre, sans l'anneau vert</b> (l'anneau reste réservé aux bonus encaissés) — puis s'efface — à lui de s'en souvenir (tire dessus pour encaisser la récompense). <b>Qui en a ?</b> En mode LOCAL, plus aucun bonus n'est caché. Sur INTERNET, les bonus ne sont cachés que sur la grille du joueur invité — le créateur de la partie n'en a plus.</p></div>
+        <div class="aide-item"><h3>🎁 BONUS CACHÉS (CLASSIQUE)</h3><p>Après validation de votre flotte, <b>8 bonus</b> (2 de chaque sorte) sont cachés au hasard sur VOTRE grille — sur des cases vides, <b>jamais sous un navire</b>, et un navire repositionné ne peut pas les recouvrir. Si l'adversaire touche une case bonus — tir simple ou zone Stratus 3×3 — son tir est consommé mais il gagne : 🚀 <b>+1 missile Stratus</b> · 🛰 <b>+1 drone</b> · 🛸 <b>+1 SUPER DRONE</b> · 💎 <b>+200 points</b>. Vous voyez vos marques, lui ne voit rien… <b>sauf s'il survole la zone avec un drone</b> : l'icône du bonus apparaît alors un instant sur son radar — <b>en ambre, sans l'anneau vert</b> (l'anneau reste réservé aux bonus encaissés) — puis s'efface — à lui de s'en souvenir (tire dessus pour encaisser la récompense). <b>Qui en a ?</b> Tout le monde : chaque joueur — en mode LOCAL comme sur INTERNET (créateur et invité) — cache 8 bonus sur sa propre grille.</p></div>
         <div class="aide-item"><h3>🚀 MISSILE STRATUS ×2</h3><p>Frappe la case visée + les 8 cases autour (<b>zone 3 × 3</b>). Munition précieuse : ménagez-la, elle rapporte du score si elle est intacte.</p></div>
         <div class="aide-item"><h3>🎣 PLEINE MER</h3><p><b>12 bateaux de pêche</b> cachés près des flottes. Les toucher = <b>-1 vie</b> (3 vies par joueur). Ils apparaissent en bleu au drone : <b>NE TIREZ PAS DESSUS</b>.</p></div>
         <div class="aide-item"><h3>💀 DEATH</h3><p>Chaque tir est un missile 3 × 3 <b>illimité</b>. Pas de drone. Destruction massive.</p></div>
@@ -1638,7 +1638,7 @@ const store = {
    La version du code reste affichée en rose-rouge dans le bandeau
    supérieur, sans vérification ni bouton. GAME_VERSION est la source
    unique de l'affichage. */
-const GAME_VERSION = '2.93';
+const GAME_VERSION = '2.94';
 /* le badge affiche toujours la version du code (une seule source : GAME_VERSION) */
 (() => {
   const el = document.getElementById('upd-version');
@@ -6834,8 +6834,13 @@ $('#btn-mode-back').addEventListener('click', () => {
   Sound.tap();
   showScreen('scr-home');
 });
-/* Cartes de mode de jeu — clic pour sélectionner */
-document.querySelectorAll('.mode-card').forEach(card => {
+/* Cartes de mode de jeu — clic pour sélectionner.
+   ★ v2.94 : [data-mode] obligatoire — les cartes LOCAL/INTERNET de
+   l'écran de style (v2.90) partagent la classe .mode-card sans data-mode ;
+   le handler générique écrasait S.gameMode avec `undefined` à chaque
+   création de partie, et les bonus cachés (comme les modes spéciaux)
+   ne s'appliquaient plus depuis la v2.90. */
+document.querySelectorAll('.mode-card[data-mode]').forEach(card => {
   card.addEventListener('click', () => {
     Sound.tap();
     document.querySelectorAll('.mode-card').forEach(c => c.classList.remove('on'));
@@ -6917,9 +6922,15 @@ $('#btn-bigmissile').addEventListener('click', () => { Sound.tap(); toggleBigMis
     S.readySent = true;
     lockPlacement(true);
     refreshPlacement();
-    /* ★ v2.93 : plus aucun bonus caché en mode LOCAL — la règle des 8
-       bonus cachés (Classique) ne s'applique plus qu'au joueur invité d'une
-       partie internet ; le créateur n'en a pas non plus. */
+    /* ★ v2.94 : bonus cachés Classique rétablis pour TOUS les joueurs —
+       8 bonus (2 de chaque) posés au hasard sur la grille validée (cases
+       vides uniquement, jamais sous un navire). Récompense pour l'adversaire
+       qui les touchera : 🚀 +1 Stratus · 🛰 +1 drone · 🛸 +1 SUPER DRONE ·
+       💎 +200 points. */
+    if (S.gameMode === 'classic') {
+      const bboard = S.boards[P.player];
+      bboard.bonus = rollBonuses(bboard);
+    }
     /* Mode Pleine mer : place les bateaux de pêche du joueur courant
        sur sa grille, avec animation. */
     if (S.gameMode === 'fishermen') {
@@ -6969,9 +6980,9 @@ $('#btn-bigmissile').addEventListener('click', () => { Sound.tap(); toggleBigMis
   /* ★ v2.80/v2.86 : Classique — 8 bonus cachés (2 de chaque) posés AU HASARD sur ma grille
      (cases vides uniquement). Ils restent SECRETS : jamais transmis, ils
      sont révélés un par un quand l'adversaire les touche.
-     ★ v2.93 : le CRÉATEUR de la partie (host) n'a plus de bonus — seuls
-     les bonus du joueur INVITÉ sont cachés sur sa grille. */
-  if (S.gameMode === 'classic' && S.role === 'guest') {
+     ★ v2.94 : rétablis pour TOUS les joueurs — le créateur (host) comme
+     l'invité posent leurs 8 bonus cachés sur leur propre grille. */
+  if (S.gameMode === 'classic') {
     S.board.bonus = rollBonuses(S.board);
   }
   send({ type: 'ready' });
