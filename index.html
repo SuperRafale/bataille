@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
-<!-- SUPER RAFALE · BUILD 2.94 · fichier autonome (+ sw.js optionnel : mode hors ligne sur serveur web) -->
+<!-- SUPER RAFALE · BUILD 2.95 · fichier autonome (+ sw.js optionnel : mode hors ligne sur serveur web) -->
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -279,6 +279,16 @@ button.bonus-flash{animation:bonusFlash .5s ease-in-out 3 !important}
 .bfx{position:absolute; width:10%; height:10%; display:flex; align-items:center; justify-content:center;
   pointer-events:none; z-index:9; font-size:min(4.6vw,26px); line-height:1; animation:bfxPop 1.7s ease-out forwards}
 @keyframes bfxPop{0%{transform:scale(.2); opacity:0}18%{transform:scale(1.7); opacity:1}70%{transform:scale(1.25); opacity:1}100%{transform:scale(1); opacity:0}}
+/* ★ v2.95 : icône drone vectorielle inline (A2) — taille du texte courant */
+.dic{width:1.12em; height:1.12em; vertical-align:-.18em; display:inline-block}
+.bmark .dic, .bfx .dic{width:82%; height:82%}
+/* ★ v2.95 : petits points flottants « +N » sur la grille (bonus, coulé, détection) */
+.ptsfx{position:absolute; width:10%; height:10%; display:flex; align-items:center; justify-content:center;
+  pointer-events:none; z-index:12; font-family:"Bebas Neue"; font-size:min(4.4vw,22px); letter-spacing:.06em;
+  color:#6cf5b8; text-shadow:0 0 9px rgba(108,245,184,.85), 0 1px 2px #000;
+  animation:ptsFloat 1.7s ease-out forwards}
+.ptsfx.amber{color:var(--amber); text-shadow:0 0 9px rgba(255,180,84,.85), 0 1px 2px #000}
+@keyframes ptsFloat{0%{opacity:0; transform:translateY(8px) scale(.5)}15%{opacity:1; transform:translateY(0) scale(1.2)}30%{transform:translateY(-6px) scale(1)}100%{opacity:0; transform:translateY(-150%)}}
 
 /* ================= VICTOIRE : brouillage grille + texte ================= */
 /* Le brouillage TV est ajouté DANS la grille (boardwrap overflow:hidden)
@@ -1010,6 +1020,35 @@ button.bonus-flash{animation:bonusFlash .5s ease-in-out 3 !important}
 </style>
 </head>
 <body>
+<!-- ★ v2.95 : sprite SVG des drones (silhouette A2 « N.Euron ») —
+     drone furtif en VERT (#4be3a0) et SUPER DRONE en ROUGE. Utilisé via
+     <use href="#ic-drone|#ic-super"/> dans les boutons, marques, messages. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<linearGradient id="dicG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5d7f8f"/><stop offset="1" stop-color="#16323f"/></linearGradient>
+<linearGradient id="dicR" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e07a6a"/><stop offset="1" stop-color="#571d18"/></linearGradient>
+<g id="ic-drone">
+<path d="M 80 14 L 148 96 L 132 108 L 119 99 L 105 113 L 92 101 L 80 124 L 68 101 L 55 113 L 41 99 L 28 108 L 12 96 Z" fill="url(#dicG)" stroke="#1e4a5e" stroke-width="5" stroke-linejoin="round"/>
+<line x1="80" y1="16" x2="146" y2="94" stroke="#9db4c0" stroke-width="2.5" opacity=".4"/>
+<line x1="80" y1="16" x2="14" y2="94" stroke="#9db4c0" stroke-width="2.5" opacity=".4"/>
+<path d="M 74 34 L 80 29 L 86 34 L 80 40 Z" fill="#0d2c22" stroke="#1e4a5e" stroke-width="1.5"/>
+<ellipse cx="80" cy="66" rx="10" ry="26" fill="#0d2c22" opacity=".5" stroke="#1e4a5e" stroke-width="2"/>
+<rect x="76" y="44" width="8" height="20" rx="4" fill="#4be3a0"/>
+<rect x="67" y="80" width="9" height="11" rx="2" fill="#16323f" stroke="#1e4a5e" stroke-width="1.5"/>
+<rect x="84" y="80" width="9" height="11" rx="2" fill="#16323f" stroke="#1e4a5e" stroke-width="1.5"/>
+<path d="M 73 112 L 87 112 L 84 121 L 76 121 Z" fill="#16323f" stroke="#1e4a5e" stroke-width="1.5"/>
+</g>
+<g id="ic-super">
+<path d="M 80 14 L 148 96 L 132 108 L 119 99 L 105 113 L 92 101 L 80 124 L 68 101 L 55 113 L 41 99 L 28 108 L 12 96 Z" fill="url(#dicR)" stroke="#4a1512" stroke-width="5" stroke-linejoin="round"/>
+<line x1="80" y1="16" x2="146" y2="94" stroke="#ffb0a4" stroke-width="2.5" opacity=".45"/>
+<line x1="80" y1="16" x2="14" y2="94" stroke="#ffb0a4" stroke-width="2.5" opacity=".45"/>
+<path d="M 74 34 L 80 29 L 86 34 L 80 40 Z" fill="#2a0f0d" stroke="#4a1512" stroke-width="1.5"/>
+<ellipse cx="80" cy="66" rx="10" ry="26" fill="#2a0f0d" opacity=".55" stroke="#4a1512" stroke-width="2"/>
+<rect x="76" y="44" width="8" height="20" rx="4" fill="#ff8577"/>
+<rect x="67" y="80" width="9" height="11" rx="2" fill="#2a0f0d" stroke="#4a1512" stroke-width="1.5"/>
+<rect x="84" y="80" width="9" height="11" rx="2" fill="#2a0f0d" stroke="#4a1512" stroke-width="1.5"/>
+<path d="M 73 112 L 87 112 L 84 121 L 76 121 Z" fill="#2a0f0d" stroke="#4a1512" stroke-width="1.5"/>
+</g>
+</defs></svg>
 <noscript><div style="padding:20px;text-align:center;color:#ff5964;font-family:monospace">JavaScript est désactivé — le jeu ne peut pas fonctionner. Ouvrez ce fichier dans Chrome avec JS activé.</div></noscript>
 <div id="netbar" class="hidden"></div>
 <div id="app">
@@ -1037,7 +1076,7 @@ button.bonus-flash{animation:bonusFlash .5s ease-in-out 3 !important}
       <circle cx="20" cy="18" r="1.1" fill="#6cf5b8"/>
     </svg>
     <div class="brand">Dassault . 5gen</div>
-    <p class="version" id="upd-version">v2.94</p>
+    <p class="version" id="upd-version">v2.95</p>
     <div id="hstat"><span class="dot"></span><span id="hstat-t">HORS LIGNE</span></div>
     <button class="hbtn on" id="btn-fullscreen" aria-label="Plein écran">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
@@ -1425,9 +1464,9 @@ button.bonus-flash{animation:bonusFlash .5s ease-in-out 3 !important}
       <div id="aide-list">
         <div class="aide-item"><h3>⚓ LE BUT</h3><p>Coulez les <b>5 navires adverses</b> avant qu'il ne coule les vôtres. Chaque joueur amarre sa flotte (porte-avions 5, croiseur 4, frégate 3, sous-marin 3, torpilleur 2), puis les tirs alternent : un par tour, touché ou à l'eau.</p></div>
         <div class="aide-item"><h3>🎯 VISER</h3><p>La vue <b>RADAR</b> montre la grille ennemie pour choisir vos tirs ; la vue <b>MA FLOTTE</b> montre la vôtre, vos navires touchés et vos <b>batteries anti-drônes</b> (2, installées sur le croiseur et la frégate).</p></div>
-        <div class="aide-item"><h3>🛰 DRONE FURTIF ×5</h3><p>Scanne la case visée + 4 adjacentes (croix). Navires révélés = <b>points verts</b>. ⚠ Les batteries ennemies <b>tirent et détruisent le drone</b> si la case visée est à <b>1 case ou moins</b> d'elles — visez plus loin ! Chaque navire coulé = <b>+1 drone</b> (tous les 4 coulés : <b>+1 missile</b> à la place).</p></div>
-        <div class="aide-item"><h3>🛰 SUPER DRONE</h3><p>À <b>7 drones en réserve</b> — ou avec une <b>charge SUPER DRONE 🛸</b> gagnée en bonus — le bouton devient SUPER DRONE : la zone de scan passe à <b>5 × 5</b> (25 cases). Une batterie située au bord de la zone (à 2 cases) reste silencieuse.</p></div>
-        <div class="aide-item"><h3>🎁 BONUS CACHÉS (CLASSIQUE)</h3><p>Après validation de votre flotte, <b>8 bonus</b> (2 de chaque sorte) sont cachés au hasard sur VOTRE grille — sur des cases vides, <b>jamais sous un navire</b>, et un navire repositionné ne peut pas les recouvrir. Si l'adversaire touche une case bonus — tir simple ou zone Stratus 3×3 — son tir est consommé mais il gagne : 🚀 <b>+1 missile Stratus</b> · 🛰 <b>+1 drone</b> · 🛸 <b>+1 SUPER DRONE</b> · 💎 <b>+200 points</b>. Vous voyez vos marques, lui ne voit rien… <b>sauf s'il survole la zone avec un drone</b> : l'icône du bonus apparaît alors un instant sur son radar — <b>en ambre, sans l'anneau vert</b> (l'anneau reste réservé aux bonus encaissés) — puis s'efface — à lui de s'en souvenir (tire dessus pour encaisser la récompense). <b>Qui en a ?</b> Tout le monde : chaque joueur — en mode LOCAL comme sur INTERNET (créateur et invité) — cache 8 bonus sur sa propre grille.</p></div>
+        <div class="aide-item"><h3><svg class="dic" viewBox="0 0 160 160" aria-hidden="true"><use href="#ic-drone"/></svg> DRONE FURTIF ×5</h3><p>Scanne la case visée + 4 adjacentes (croix). Navires révélés = <b>points verts</b>. ⚠ Les batteries ennemies <b>tirent et détruisent le drone</b> si la case visée est à <b>1 case ou moins</b> d'elles — visez plus loin ! Chaque navire coulé = <b>+1 drone</b> (tous les 4 coulés : <b>+1 missile</b> à la place).</p></div>
+        <div class="aide-item"><h3><svg class="dic" viewBox="0 0 160 160" aria-hidden="true"><use href="#ic-super"/></svg> SUPER DRONE</h3><p>À <b>7 drones en réserve</b> — ou avec une <b>charge SUPER DRONE <svg class="dic" viewBox="0 0 160 160" aria-hidden="true"><use href="#ic-super"/></svg></b> gagnée en bonus — le bouton devient SUPER DRONE : la zone de scan passe à <b>5 × 5</b> (25 cases). Une batterie située au bord de la zone (à 2 cases) reste silencieuse. ★ v2.95 : la charge « <b>+1 SUPER DRONE</b> » des bonus de grille n'est plus versée à partir de <b>8 drones obtenus</b> — les +50 points restent encaissés.</p></div>
+        <div class="aide-item"><h3>🎁 BONUS CACHÉS (CLASSIQUE)</h3><p>Après validation de votre flotte, <b>8 bonus</b> (2 de chaque sorte) sont cachés au hasard sur VOTRE grille — sur des cases vides, <b>jamais sous un navire</b>, et un navire repositionné ne peut pas les recouvrir. Si l'adversaire touche une case bonus — tir simple ou zone Stratus 3×3 — son tir est consommé mais il gagne <b>+50 points</b> ET : 🚀 <b>+1 missile Stratus</b> · <svg class="dic" viewBox="0 0 160 160" aria-hidden="true"><use href="#ic-drone"/></svg> <b>+1 drone</b> · <svg class="dic" viewBox="0 0 160 160" aria-hidden="true"><use href="#ic-super"/></svg> <b>+1 SUPER DRONE</b> (plus versé à partir de 8 drones obtenus) · 💎 <b>+250 points</b> (200 + 50). Vous voyez vos marques, lui ne voit rien… <b>sauf s'il survole la zone avec un drone</b> : l'icône du bonus apparaît alors un instant sur son radar — <b>en ambre, sans l'anneau vert</b> (l'anneau reste réservé aux bonus encaissés) — puis s'efface — à lui de s'en souvenir (tire dessus pour encaisser la récompense). <b>Qui en a ?</b> Tout le monde : chaque joueur — en mode LOCAL comme sur INTERNET (créateur et invité) — cache 8 bonus sur sa propre grille.</p></div>
         <div class="aide-item"><h3>🚀 MISSILE STRATUS ×2</h3><p>Frappe la case visée + les 8 cases autour (<b>zone 3 × 3</b>). Munition précieuse : ménagez-la, elle rapporte du score si elle est intacte.</p></div>
         <div class="aide-item"><h3>🎣 PLEINE MER</h3><p><b>12 bateaux de pêche</b> cachés près des flottes. Les toucher = <b>-1 vie</b> (3 vies par joueur). Ils apparaissent en bleu au drone : <b>NE TIREZ PAS DESSUS</b>.</p></div>
         <div class="aide-item"><h3>💀 DEATH</h3><p>Chaque tir est un missile 3 × 3 <b>illimité</b>. Pas de drone. Destruction massive.</p></div>
@@ -1485,39 +1524,11 @@ button.bonus-flash{animation:bonusFlash .5s ease-in-out 3 !important}
       <div class="seg" id="viewswitch">
         <button id="btn-toggle-view" class="on">RADAR</button>
         <button id="btn-stealth" title="Mode furtif — envoie un drone scanner">
-          <svg class="drone-icon" viewBox="0 0 80 100" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="btnDroneTop" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="#c9dde6"/>
-                <stop offset="40%" stop-color="#8aa3b0"/>
-                <stop offset="100%" stop-color="#3a5563"/>
-              </linearGradient>
-              <linearGradient id="btnDroneRight" x1="1" y1="0" x2="0" y2="0">
-                <stop offset="0%" stop-color="#9db4c0"/>
-                <stop offset="100%" stop-color="#2a4452"/>
-              </linearGradient>
-            </defs>
-            <path d="M 40 15 L 8 70 L 40 65 Z" fill="url(#btnDroneTop)" stroke="#1e4a5e" stroke-width="0.8"/>
-            <path d="M 40 15 L 72 70 L 40 65 Z" fill="url(#btnDroneRight)" stroke="#1e4a5e" stroke-width="0.8"/>
-            <line x1="40" y1="15" x2="40" y2="65" stroke="#1e4a5e" stroke-width="0.6" opacity="0.7"/>
-            <path d="M 8 70 L 6 67 L 12 70 Z" fill="#9db4c0" stroke="#1e4a5e" stroke-width="0.4"/>
-            <path d="M 72 70 L 74 67 L 68 70 Z" fill="#3a5563" stroke="#1e4a5e" stroke-width="0.4"/>
-            <ellipse cx="40" cy="73" rx="5" ry="10" fill="#ffb454" opacity="0.85"/>
-            <ellipse cx="40" cy="71" rx="2.5" ry="5" fill="#fff" opacity="0.9"/>
-          </svg>
+          <svg class="drone-icon" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg"><use href="#ic-drone"/></svg>
           DRONE FURTIF <span id="stealth-count">×5</span>
         </button>
         <button id="btn-superdrone" class="super" title="SUPER DRONE — débloqué à 7 drones">
-          <svg class="drone-icon" viewBox="0 0 80 100" xmlns="http://www.w3.org/2000/svg">
-            <!-- ★ v2.64 : réutilise les gradients btnDroneTop/btnDroneRight
-                 définis dans le SVG du bouton drone (mêmes ids, document
-                 unique) ; flammes rouges pour marquer le mode SUPER. -->
-            <path d="M 40 15 L 8 70 L 40 65 Z" fill="url(#btnDroneTop)" stroke="#1e4a5e" stroke-width="0.8"/>
-            <path d="M 40 15 L 72 70 L 40 65 Z" fill="url(#btnDroneRight)" stroke="#1e4a5e" stroke-width="0.8"/>
-            <line x1="40" y1="15" x2="40" y2="65" stroke="#1e4a5e" stroke-width="0.6" opacity="0.7"/>
-            <ellipse cx="40" cy="73" rx="5" ry="10" fill="#ff5964" opacity="0.9"/>
-            <ellipse cx="40" cy="71" rx="2.5" ry="5" fill="#fff" opacity="0.9"/>
-          </svg>
+          <svg class="drone-icon" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg"><use href="#ic-super"/></svg>
           SUPER DRONE <span id="superdrone-count">×0</span>
         </button>
         <button id="btn-bigmissile">
@@ -1638,7 +1649,7 @@ const store = {
    La version du code reste affichée en rose-rouge dans le bandeau
    supérieur, sans vérification ni bouton. GAME_VERSION est la source
    unique de l'affichage. */
-const GAME_VERSION = '2.94';
+const GAME_VERSION = '2.95';
 /* le badge affiche toujours la version du code (une seule source : GAME_VERSION) */
 (() => {
   const el = document.getElementById('upd-version');
@@ -1969,8 +1980,8 @@ function randomFleet(b) {
    que s'il survole la zone avec un drone ou un SUPER DRONE (★ v2.86). */
 const BONUS_DEF = [
   { type: 'missile',    icon: '🚀', label: '+1 MISSILE STRATUS', count: 2 },
-  { type: 'drone',      icon: '🛰',  label: '+1 DRONE FURTIF',    count: 2 },
-  { type: 'superdrone', icon: '🛸',  label: '+1 SUPER DRONE',     count: 2 },
+  { type: 'drone',      icon: '🛰',  ic: 'drone', label: '+1 DRONE FURTIF',    count: 2 },
+  { type: 'superdrone', icon: '🛸',  ic: 'super', label: '+1 SUPER DRONE',     count: 2 },
   { type: 'points',     icon: '💎',  label: '+200 POINTS',        count: 2 },
 ];
 function rollBonuses(board) {
@@ -1987,15 +1998,22 @@ function rollBonuses(board) {
 function bonusAt(board, idx) {
   return (board.bonus || []).find(b => b.idx === idx && !b.found) || null;
 }
-/* Applique la récompense au chasseur (p = index du joueur récompensé) */
-function awardBonus(p, type) {
+/* Applique la récompense au chasseur (p = index du joueur récompensé).
+   ★ v2.95 : CHAQUE bonus de grille encaissé rapporte +50 POINTS en plus de
+   sa récompense (gx, gy = case du bonus, pour le « +N » flottant sur le radar).
+   ★ v2.95 : la charge « +1 SUPER DRONE » n'est plus versée à partir de
+   8 drones OBTENUS (dronesGot) — les +50 points restent encaissés. */
+function awardBonus(p, type, gx, gy) {
   const def = BONUS_DEF.find(d => d.type === type);
   if (!def) return;
+  if (S.mode === 'online') S.stats.bonusPts = (S.stats.bonusPts || 0) + 50;
+  else if (S.pstats) S.pstats[p].bonusPts = (S.pstats[p].bonusPts || 0) + 50;
   if (type === 'missile') {
     S.bigMissileLeft[p] = (S.bigMissileLeft[p] || 0) + 1;
     if (p === currentPlayerIdx()) { updateBigMissileButton(); flashButton('btn-bigmissile'); }
-    logMsg('<b style="color:var(--red)">BONUS 🚀 DÉCOUVERT</b> — +1 MISSILE STRATUS');
+    logMsg('<b style="color:var(--red)">BONUS 🚀 DÉCOUVERT</b> — +1 MISSILE STRATUS · +50 PTS');
   } else if (type === 'drone') {
+    addDronesGot(p, 1);
     const before = S.stealthLeft[p] || 0;
     S.stealthLeft[p] = before + 1;
     if (S.stealthLeft[p] >= 7 && before < 7) {
@@ -2003,19 +2021,25 @@ function awardBonus(p, type) {
       if (p === currentPlayerIdx()) flashButton('btn-superdrone');
     }
     if (p === currentPlayerIdx()) updateStealthButton();
-    logMsg('<b style="color:var(--amber)">BONUS 🛰 DÉCOUVERT</b> — +1 DRONE FURTIF');
+    logMsg('<b style="color:var(--amber)">BONUS ' + droneIconSVG('drone') + ' DÉCOUVERT</b> — +1 DRONE FURTIF · +50 PTS');
     if (p === currentPlayerIdx()) flashButton('btn-stealth');
   } else if (type === 'superdrone') {
-    /* ★ v2.86 : +1 SUPER DRONE — charge dédiée (scan 5×5 immédiat), même
-       quand le stock de drones simples est sous le seuil de 7. */
-    S.superDroneLeft[p] = (S.superDroneLeft[p] || 0) + 1;
-    if (p === currentPlayerIdx()) { updateStealthButton(); flashButton('btn-superdrone'); }
-    logMsg('<b style="color:var(--red)">BONUS 🛸 DÉCOUVERT</b> — +1 SUPER DRONE');
+    if (dronesGot(p) >= 8) {
+      /* ★ v2.95 : 8 drones obtenus ou plus — la charge n'est PAS versée */
+      logMsg('<b style="color:var(--dim)">BONUS ' + droneIconSVG('super') + ' REFUSÉ</b> — 8 drones déjà obtenus · +50 PTS quand même');
+    } else {
+      /* ★ v2.86 : +1 SUPER DRONE — charge dédiée (scan 5×5 immédiat), même
+         quand le stock de drones simples est sous le seuil de 7. */
+      S.superDroneLeft[p] = (S.superDroneLeft[p] || 0) + 1;
+      if (p === currentPlayerIdx()) { updateStealthButton(); flashButton('btn-superdrone'); }
+      logMsg('<b style="color:var(--red)">BONUS ' + droneIconSVG('super') + ' DÉCOUVERT</b> — +1 SUPER DRONE · +50 PTS');
+    }
   } else if (type === 'points') {
     if (S.mode === 'online') S.stats.bonusPts = (S.stats.bonusPts || 0) + 200;
     else if (S.pstats) S.pstats[p].bonusPts = (S.pstats[p].bonusPts || 0) + 200;
-    logMsg('<b style="color:#6cf5b8">BONUS 💎 DÉCOUVERT</b> — +200 POINTS');
+    logMsg('<b style="color:#6cf5b8">BONUS 💎 DÉCOUVERT</b> — +250 POINTS (200 + 50)');
   }
+  if (gx != null && gy != null) ptsFx(GRIDS.radar, gx, gy, type === 'points' ? '+250' : '+50', type === 'points' ? '' : 'amber');
   Sound.ready(); vib([40, 60, 40, 60, 120]);
 }
 /* Marques de bonus sur une grille : onlyFound=true → les TROUVÉS (touchés)
@@ -2031,7 +2055,8 @@ function paintBonusMarks(g, board, onlyFound) {
     el.className = 'bmark' + (b.found ? ' found' : ' spotted');
     el.style.left = (b.idx % 10) * 10 + '%';
     el.style.top = ((b.idx / 10) | 0) * 10 + '%';
-    el.textContent = d ? d.icon : '🎁';
+    /* ★ v2.95 : drone/super en SVG (A2), emoji sinon */
+    if (d && d.ic) el.innerHTML = droneIconSVG(d.ic, 'dic'); else el.textContent = d ? d.icon : '🎁';
     g.markers.appendChild(el);
   });
 }
@@ -2051,7 +2076,8 @@ function bonusRevealFx(g, x, y, type) {
   el.className = 'bfx';
   el.style.left = x * 10 + '%';
   el.style.top = y * 10 + '%';
-  el.textContent = d ? d.icon : '🎁';
+  /* ★ v2.95 : drone/super en SVG (A2), emoji sinon */
+  if (d && d.ic) el.innerHTML = droneIconSVG(d.ic, 'dic'); else el.textContent = d ? d.icon : '🎁';
   g.fx.appendChild(el);
   setTimeout(() => el.remove(), 1700);
 }
@@ -2069,7 +2095,8 @@ function bonusSpotFx(x, y, type) {
   el.className = 'bmark spotted';
   el.style.left = x * 10 + '%';
   el.style.top = y * 10 + '%';
-  el.textContent = d ? d.icon : '🎁';
+  /* ★ v2.95 : drone/super en SVG (A2), emoji sinon */
+  if (d && d.ic) el.innerHTML = droneIconSVG(d.ic, 'dic'); else el.textContent = d ? d.icon : '🎁';
   g.fx.appendChild(el);
   setTimeout(() => el.remove(), 1600);
 }
@@ -2086,7 +2113,7 @@ function applyBonusReport(list) {
     if (prev) { prev.found = true; prev.spotted = false; }
     else S.radarB.bonus.push({ idx, type: c.type, found: true });
     setTimeout(() => {
-      awardBonus(p, c.type);
+      awardBonus(p, c.type, c.x, c.y);
       bonusRevealFx(GRIDS.radar, c.x, c.y, c.type);
       paintBattle();
     }, 600 + i * 900);
@@ -2110,12 +2137,12 @@ const S = {
   boards: null, localTurn: 0,
   oppReady: false, readySent: false,
   battle: false, turn: null, busy: false, view: 'radar',
-  stats: { fires: 0, hits: 0, drones: 0, missiles: 0, detections: 0 }, pstats: null,
+  stats: { fires: 0, hits: 0, drones: 0, missiles: 0, detections: 0, dronesGot: 0 }, pstats: null,
   /* ★ v2.76 : miroir des stats ADVERSES (mode réseau) — alimenté côté
      défenseur à chaque tir/missile/drone reçu.
      ★ v2.78 : sert au PERDANT (réseau) pour afficher le score final du
      VAINQUEUR sur son écran des scores (le score en direct a été supprimé). */
-  foeStats: { fires: 0, hits: 0, drones: 0, missiles: 0, detections: 0 },
+  foeStats: { fires: 0, hits: 0, drones: 0, missiles: 0, detections: 0, dronesGot: 0 },
   rematchMe: false, rematchOpp: false,
   /* Hall of Fame */
   lastResult: null,        // ★ v2.65 : { win, sunk, fires, hits, mode, why, winner, drones, missiles, detections, sinks, gmode }
@@ -2368,6 +2395,39 @@ function computeScore(res) {
 
 function shipIcon() {
   return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 18h18M5 18l1-6h12l1 6M9 12V8h6v4M12 8V4M9 4h6"/></svg>';
+}
+/* ★ v2.95 : icône drone vectorielle (A2) réutilisable — vert (drone) / rouge (super).
+   (nom distinct de droneSVG() — le drone volant du scan, défini plus bas) */
+function droneIconSVG(kind, cls) {
+  return '<svg class="' + (cls || 'dic') + '" viewBox="0 0 160 160" aria-hidden="true"><use href="#' + (kind === 'super' ? 'ic-super' : 'ic-drone') + '"/></svg>';
+}
+/* ★ v2.95 : petits points flottants « +N » sur la grille (bonus, navire coulé, détection) */
+function ptsFx(g, x, y, txt, cls) {
+  if (!g || !g.fx || x == null || y == null) return;
+  const el = document.createElement('div');
+  el.className = 'ptsfx' + (cls ? ' ' + cls : '');
+  el.style.left = x * 10 + '%';
+  el.style.top = y * 10 + '%';
+  el.textContent = txt;
+  g.fx.appendChild(el);
+  setTimeout(() => el.remove(), 1800);
+}
+/* ★ v2.95 : points d'un navire coulé (barème v2.75 : rapidité + type) */
+function sinkPtsOf(shipIdx, coups) {
+  const def = FLEET_DEF[shipIdx] || { len: 5, pts: 0 };
+  const c = Math.min(5, Math.max(1, coups || def.len));
+  return SINK_SPEED_PTS[c] + def.pts;
+}
+/* ★ v2.95 : compteur de drones OBTENUS dans la partie (bonus de grille + navires
+   coulés ; le stock initial de 5 ne compte pas). Sert à retirer le bonus
+   « +1 SUPER DRONE » des bonus de grille à partir de 8 drones obtenus. */
+function dronesGot(p) {
+  if (S.mode === 'online') return S.stats.dronesGot || 0;
+  return (S.pstats && S.pstats[p] && S.pstats[p].dronesGot) || 0;
+}
+function addDronesGot(p, n) {
+  if (S.mode === 'online') S.stats.dronesGot = (S.stats.dronesGot || 0) + n;
+  else if (S.pstats && S.pstats[p]) S.pstats[p].dronesGot = (S.pstats[p].dronesGot || 0) + n;
 }
 
 /* ★ v2.83 : trèfle porte-bonheur officiel (le logo du jeu) réutilisable */
@@ -4127,13 +4187,19 @@ function resolveBigMissileImpact(cx, cy) {
   /* ★ v2.75 : chaque navire endommagé par CE missile ne compte qu'UN coup,
      même s'il a été touché sur plusieurs cases (barème de rapidité). */
   touched75.forEach(si => { const sh = foeBoard.ships[si]; sh.coups = (sh.coups || 0) + 1; });
+  /* ★ v2.95 : points flottants sur chaque navire coulé (barème rapidité + type) */
+  sunkShipIdxs.forEach((si, i) => {
+    const sh = foeBoard.ships[si];
+    const c0 = (sh.cells && sh.cells[0]) || { x: cx, y: cy };
+    setTimeout(() => ptsFx(GRIDS.radar, c0.x, c0.y, '+' + sinkPtsOf(si, sh.coups)), 650 + i * 900);
+  });
 
   /* ★ v2.80 : bonus cachés trouvés dans la zone — récompense au tireur
      (cascade décalée pour que chaque pop soit lisible ; pB capturé AVANT
      le handoff, sinon la récompense irait au mauvais joueur). */
   const pB = S.localTurn;
   bonusHitsLocal.forEach((b, i) => setTimeout(() => {
-    awardBonus(pB, b.type);
+    awardBonus(pB, b.type, b.idx % 10, (b.idx / 10) | 0);
     bonusRevealFx(GRIDS.radar, b.idx % 10, (b.idx / 10) | 0, b.type);
     paintBattle();
   }, 500 + i * 900));
@@ -4295,7 +4361,7 @@ function resolveAfterMissile(x, y) {
   const bLoc = bonusAt(S.boards[foe], xy(x, y));
   if (bLoc) {
     bLoc.found = true;
-    awardBonus(S.localTurn, bLoc.type);
+    awardBonus(S.localTurn, bLoc.type, x, y);
     bonusRevealFx(GRIDS.radar, x, y, bLoc.type);
   }
   showImpactEffect(x, y, r.hit);
@@ -4304,6 +4370,7 @@ function resolveAfterMissile(x, y) {
   if (r.sunk) {
     setTimeout(() => Sound.sunk(), 300);
     logMsg(`${playerTag(S.localTurn + 1)} — ${FLEET_DEF[r.ship].name} ennemi <b class="k-bad">COULÉ</b>`);
+    ptsFx(GRIDS.radar, x, y, '+' + sinkPtsOf(r.ship, S.boards[foe].ships[r.ship].coups));  /* ★ v2.95 : points du coulage */
     /* Récompense IMMÉDIATE : +1 drone furtif + flash bouton (le handoff
        arrive à T=2700ms, le flash de 1.5s a donc le temps d'être vu). */
     awardStealthDrone(currentPlayerIdx());
@@ -4416,6 +4483,7 @@ function awardStealthDrone(playerIdx) {
   }
   const before = S.stealthLeft[p] || 0;
   S.stealthLeft[p] = before + 1;
+  addDronesGot(p, 1);  /* ★ v2.95 : compteur de drones obtenus (bonus + coulés) */
   /* ★ v2.67 : au passage à 7 drones en stock, le SUPER scan 5×5 se débloque */
   if (S.stealthLeft[p] >= 7 && before < 7) {
     logMsg('<b style="color:var(--red)">SUPER DRONE DÉBLOQUÉ</b> — 7 drones en stock : scan 5×5 (25 cases)');
@@ -4603,7 +4671,7 @@ function updateSuperDroneButton() {
   } else if (!ok) {
     btn.title = 'SUPER DRONE — débloqué à 7 drones (stock : ' + stock + ')';
   } else {
-    btn.title = superLeft > 0 ? 'SUPER DRONE — scan 5×5 (25 cases) · ' + superLeft + ' charge' + (superLeft > 1 ? 's' : '') + ' bonus 🛸'
+    btn.title = superLeft > 0 ? 'SUPER DRONE — scan 5×5 (25 cases) · ' + superLeft + ' charge' + (superLeft > 1 ? 's' : '') + ' bonus'
                               : 'SUPER DRONE — scan 5×5 (25 cases)';
   }
 }
@@ -5165,6 +5233,7 @@ function stealthScan(cx, cy) {
          révélé au moins un navire ennemi — même si le drone est abattu
          ensuite par une batterie (la détection a bien eu lieu). */
       if (hits > 0 && S.pstats) S.pstats[p].detections++;
+      if (hits > 0) ptsFx(GRIDS.radar, cx, cy, '+100');  /* ★ v2.95 : détection = +100 pts (barème) */
       const logParts = [isSuper
         ? `<b style="color:var(--red)">SUPER DRONE</b>`
         : `<b style="color:var(--phos)">DRONE FURTIF</b>`];
@@ -5382,6 +5451,11 @@ function onReport(r) {
       setTimeout(() => Sound.sunk(), 300);
       const nSunk = r.sunkShipsList ? r.sunkShipsList.length : 1;
       logMsg(`<b class="k-ok">MISSILE STRATUS</b> — TOUCHÉ · ${nSunk > 1 ? nSunk + ' navires ennemis' : 'navire ennemi'} <b class="k-bad">COULÉ${nSunk > 1 ? 'S' : ''}</b>`);
+      /* ★ v2.95 : points flottants sur chaque navire coulé (barème) */
+      if (r.sunkShipsList) r.sunkShipsList.forEach((s, i) => {
+        const c0 = (s.cells && s.cells[0]) || { x: r.x, y: r.y };
+        setTimeout(() => ptsFx(GRIDS.radar, c0.x, c0.y, '+' + sinkPtsOf(s.idx, s.coups)), 350 + i * 1000);
+      });
       /* ★ Récompenses : +1 drone PAR navire coulé (cascade 1 s), comme en
          local (avant : un seul bonus quel que soit le nombre de coulés). */
       for (let i = 0; i < nSunk; i++) {
@@ -5434,6 +5508,7 @@ function onReport(r) {
   if (r.sunk) {
     setTimeout(() => Sound.sunk(), 300);
     logMsg(`<b class="k-ok">TIR</b> — TOUCHÉ · ${FLEET_DEF[r.ship].name} ennemi <b class="k-bad">COULÉ</b>`);
+    ptsFx(GRIDS.radar, r.x, r.y, '+' + sinkPtsOf(r.ship, r.coups));  /* ★ v2.95 : points du coulage */
     /* Récompense IMMÉDIATE : +1 drone furtif + flash bouton */
     awardStealthDrone(currentPlayerIdx());
     checkShipSunkBonus();
@@ -5567,7 +5642,7 @@ function onFire(m) {
     /* ★ v2.75 : chaque navire endommagé par CE missile ne compte qu'UN coup */
     touched75.forEach(si => { const sh = S.board.ships[si]; sh.coups = (sh.coups || 0) + 1; });
     /* ★ v2.80 : bonus trouvés → miroir du score adverse (💎) */
-    bonusDefHits.forEach(b => { if (b.type === 'points') S.foeStats.bonusPts = (S.foeStats.bonusPts || 0) + 200; });
+    bonusDefHits.forEach(b => { S.foeStats.bonusPts = (S.foeStats.bonusPts || 0) + 50; if (b.type === 'points') S.foeStats.bonusPts = (S.foeStats.bonusPts || 0) + 200; });  /* ★ v2.95 : +50 par bonus */
 
     /* ★ v2.57 : retire les bateaux de pêche détruits de ma liste (ils
        disparaissent de MA FLOTTE au prochain paint). */
@@ -5694,6 +5769,7 @@ function onFire(m) {
   const bDef = bonusAt(S.board, xy(m.x, m.y));
   if (bDef) {
     bDef.found = true;
+    S.foeStats.bonusPts = (S.foeStats.bonusPts || 0) + 50;  /* ★ v2.95 : +50 par bonus */
     if (bDef.type === 'points') S.foeStats.bonusPts = (S.foeStats.bonusPts || 0) + 200;  /* miroir du score adverse */
   }
   const rEarly = receiveFire(S.board, m.x, m.y);
@@ -6013,6 +6089,7 @@ function onDroneScanResult(hits, cx, cy, fishing, bonuses) {
     const numHits = hits.length;
     /* ★ v2.65 HOF : détection réussie (au moins un navire révélé) */
     if (numHits > 0) S.stats.detections++;
+    if (numHits > 0) ptsFx(g, cx, cy, '+100');  /* ★ v2.95 : détection = +100 pts (barème) */
     hits.forEach(h => {
       const dot = document.createElement('div');
       dot.className = 'target-dot' + (h.x === cx && h.y === cy ? ' center' : '');
@@ -6213,7 +6290,8 @@ function endGame(win, why) {
     missiles: (S.foeStats || {}).missiles || 0, detections: (S.foeStats || {}).detections || 0,
     sinks: sinksOf(S.board), win: true, bonus: (S.foeStats || {}).bonusPts || 0,
   });
-  const bTxt = (win ? myBonus : ((S.foeStats || {}).bonusPts || 0)) > 0 ? ' · +200 BONUS' : '';  /* ★ v2.80 */
+  const endBonus = win ? myBonus : ((S.foeStats || {}).bonusPts || 0);
+  const bTxt = endBonus > 0 ? ' · +' + endBonus + ' BONUS' : '';  /* ★ v2.80 · v2.95 : montant dynamique */
   $('#end-stats').innerHTML = S.gameMode === 'classic'
     ? `<div class="score-main"><b>${winScore}</b><span>${win ? 'SCORE · DONT +500 VICTOIRE' : 'SCORE DU VAINQUEUR · DONT +500 VICTOIRE'}${bTxt}</span></div>`
     : '';
@@ -6257,7 +6335,7 @@ function endGameLocal(winner) {
   const ws = S.pstats[winner];
   const winScore = computeScore({ sunk: S.boards[1 - winner].ships.filter(sh => sh.sunk).length, fires: ws.fires, drones: ws.drones || 0, missiles: ws.missiles || 0, detections: ws.detections || 0, sinks: sinksOf(S.boards[1 - winner]), win: true, bonus: ws.bonusPts || 0 });
   $('#end-stats').innerHTML = S.gameMode !== 'classic' ? '' :
-    `<div class="sc-win"><b>${winScore}</b><span>JOUEUR ${winner + 1} · SCORE · DONT +500 VICTOIRE${(ws.bonusPts || 0) > 0 ? ' · +200 BONUS' : ''}</span></div>`;
+    `<div class="sc-win"><b>${winScore}</b><span>JOUEUR ${winner + 1} · SCORE · DONT +500 VICTOIRE${(ws.bonusPts || 0) > 0 ? ' · +' + ws.bonusPts + ' BONUS' : ''}</span></div>`;
   /* ★ v2.74 : carrière — en local, la partie et le record Classique (meilleur
      des deux joueurs) sont comptés ; pas de victoire attribuable à l'appareil.
      ★ v2.78 : le record suit le score du VAINQUEUR (le seul désormais affiché). */
@@ -6300,10 +6378,10 @@ function resetMatch() {
   S.boards = [makeBoard(), makeBoard()];
   /* ★ v2.65 : stats complètes pour le barème du Hall of Fame (Classique) */
   /* ★ v2.80 : bonusPts = points bonus cachés (💎) découverts chez l'adversaire */
-  S.pstats = [{ fires: 0, hits: 0, drones: 0, missiles: 0, detections: 0, bonusPts: 0 },
-              { fires: 0, hits: 0, drones: 0, missiles: 0, detections: 0, bonusPts: 0 }];
-  S.stats = { fires: 0, hits: 0, drones: 0, missiles: 0, detections: 0, bonusPts: 0 };
-  S.foeStats = { fires: 0, hits: 0, drones: 0, missiles: 0, detections: 0, bonusPts: 0 };  /* ★ v2.76 : miroir adverse (v2.78 : score du vainqueur ; v2.80 : bonusPts) */
+  S.pstats = [{ fires: 0, hits: 0, drones: 0, missiles: 0, detections: 0, bonusPts: 0, dronesGot: 0 },
+              { fires: 0, hits: 0, drones: 0, missiles: 0, detections: 0, bonusPts: 0, dronesGot: 0 }];
+  S.stats = { fires: 0, hits: 0, drones: 0, missiles: 0, detections: 0, bonusPts: 0, dronesGot: 0 };
+  S.foeStats = { fires: 0, hits: 0, drones: 0, missiles: 0, detections: 0, bonusPts: 0, dronesGot: 0 };  /* ★ v2.76 : miroir adverse (v2.78 : score du vainqueur ; v2.80 : bonusPts) */
   S.readySent = false; S.oppReady = false; S.battle = false;
   S.hofPending = null; updateHofButton();  /* ★ v2.73 : plus d'inscription en attente au retour au port */
   S.turn = null; S.busy = false; S.localTurn = 0; P.player = 0;
