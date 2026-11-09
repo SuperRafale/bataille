@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
-<!-- SUPER RAFALE · BUILD 2.95 · fichier autonome (+ sw.js optionnel : mode hors ligne sur serveur web) -->
+<!-- SUPER RAFALE · BUILD 2.97 · fichier autonome (+ sw.js optionnel : mode hors ligne sur serveur web) -->
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -276,6 +276,9 @@ button.bonus-flash{animation:bonusFlash .5s ease-in-out 3 !important}
    drone (icône ambre, SANS anneau vert — l'anneau reste réservé aux bonus
    encaissés, classe « found »). */
 .bmark.spotted{opacity:.95; filter:drop-shadow(0 0 5px rgba(255,180,84,.75))}
+/* ★ v2.97 : apparition animée des bonus 1 par 1 à la validation de la flotte */
+.bmark.rv{animation:bmarkIn .5s ease-out}
+@keyframes bmarkIn{0%{transform:scale(.2); opacity:0}55%{transform:scale(1.7); opacity:1}100%{transform:scale(1); opacity:.95}}
 .bfx{position:absolute; width:10%; height:10%; display:flex; align-items:center; justify-content:center;
   pointer-events:none; z-index:9; font-size:min(4.6vw,26px); line-height:1; animation:bfxPop 1.7s ease-out forwards}
 @keyframes bfxPop{0%{transform:scale(.2); opacity:0}18%{transform:scale(1.7); opacity:1}70%{transform:scale(1.25); opacity:1}100%{transform:scale(1); opacity:0}}
@@ -1076,7 +1079,7 @@ button.bonus-flash{animation:bonusFlash .5s ease-in-out 3 !important}
       <circle cx="20" cy="18" r="1.1" fill="#6cf5b8"/>
     </svg>
     <div class="brand">Dassault . 5gen</div>
-    <p class="version" id="upd-version">v2.95</p>
+    <p class="version" id="upd-version">v2.97</p>
     <div id="hstat"><span class="dot"></span><span id="hstat-t">HORS LIGNE</span></div>
     <button class="hbtn on" id="btn-fullscreen" aria-label="Plein écran">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
@@ -1464,9 +1467,9 @@ button.bonus-flash{animation:bonusFlash .5s ease-in-out 3 !important}
       <div id="aide-list">
         <div class="aide-item"><h3>⚓ LE BUT</h3><p>Coulez les <b>5 navires adverses</b> avant qu'il ne coule les vôtres. Chaque joueur amarre sa flotte (porte-avions 5, croiseur 4, frégate 3, sous-marin 3, torpilleur 2), puis les tirs alternent : un par tour, touché ou à l'eau.</p></div>
         <div class="aide-item"><h3>🎯 VISER</h3><p>La vue <b>RADAR</b> montre la grille ennemie pour choisir vos tirs ; la vue <b>MA FLOTTE</b> montre la vôtre, vos navires touchés et vos <b>batteries anti-drônes</b> (2, installées sur le croiseur et la frégate).</p></div>
-        <div class="aide-item"><h3><svg class="dic" viewBox="0 0 160 160" aria-hidden="true"><use href="#ic-drone"/></svg> DRONE FURTIF ×5</h3><p>Scanne la case visée + 4 adjacentes (croix). Navires révélés = <b>points verts</b>. ⚠ Les batteries ennemies <b>tirent et détruisent le drone</b> si la case visée est à <b>1 case ou moins</b> d'elles — visez plus loin ! Chaque navire coulé = <b>+1 drone</b> (tous les 4 coulés : <b>+1 missile</b> à la place).</p></div>
-        <div class="aide-item"><h3><svg class="dic" viewBox="0 0 160 160" aria-hidden="true"><use href="#ic-super"/></svg> SUPER DRONE</h3><p>À <b>7 drones en réserve</b> — ou avec une <b>charge SUPER DRONE <svg class="dic" viewBox="0 0 160 160" aria-hidden="true"><use href="#ic-super"/></svg></b> gagnée en bonus — le bouton devient SUPER DRONE : la zone de scan passe à <b>5 × 5</b> (25 cases). Une batterie située au bord de la zone (à 2 cases) reste silencieuse. ★ v2.95 : la charge « <b>+1 SUPER DRONE</b> » des bonus de grille n'est plus versée à partir de <b>8 drones obtenus</b> — les +50 points restent encaissés.</p></div>
-        <div class="aide-item"><h3>🎁 BONUS CACHÉS (CLASSIQUE)</h3><p>Après validation de votre flotte, <b>8 bonus</b> (2 de chaque sorte) sont cachés au hasard sur VOTRE grille — sur des cases vides, <b>jamais sous un navire</b>, et un navire repositionné ne peut pas les recouvrir. Si l'adversaire touche une case bonus — tir simple ou zone Stratus 3×3 — son tir est consommé mais il gagne <b>+50 points</b> ET : 🚀 <b>+1 missile Stratus</b> · <svg class="dic" viewBox="0 0 160 160" aria-hidden="true"><use href="#ic-drone"/></svg> <b>+1 drone</b> · <svg class="dic" viewBox="0 0 160 160" aria-hidden="true"><use href="#ic-super"/></svg> <b>+1 SUPER DRONE</b> (plus versé à partir de 8 drones obtenus) · 💎 <b>+250 points</b> (200 + 50). Vous voyez vos marques, lui ne voit rien… <b>sauf s'il survole la zone avec un drone</b> : l'icône du bonus apparaît alors un instant sur son radar — <b>en ambre, sans l'anneau vert</b> (l'anneau reste réservé aux bonus encaissés) — puis s'efface — à lui de s'en souvenir (tire dessus pour encaisser la récompense). <b>Qui en a ?</b> Tout le monde : chaque joueur — en mode LOCAL comme sur INTERNET (créateur et invité) — cache 8 bonus sur sa propre grille.</p></div>
+        <div class="aide-item"><h3><svg class="dic" viewBox="0 0 160 160" aria-hidden="true"><use href="#ic-drone"/></svg> DRONE FURTIF ×5</h3><p>Scanne la case visée + 4 adjacentes (croix). Navires révélés = <b>points verts</b>. ⚠ Les batteries ennemies <b>tirent et détruisent le drone</b> si la case visée est à <b>1 case ou moins</b> d'elles — visez plus loin ! ★ v2.97 : vous gagnez <b>+1 drone</b> en coulant le <b>1er, le 2e et le 4e navire ennemi</b>, et en touchant un bonus <svg class="dic" viewBox="0 0 160 160" aria-hidden="true"><use href="#ic-drone"/></svg> caché. Le 4e coulé déclenche AUSSI <b>+1 missile Stratus</b>.</p></div>
+        <div class="aide-item"><h3><svg class="dic" viewBox="0 0 160 160" aria-hidden="true"><use href="#ic-super"/></svg> SUPER DRONE</h3><p>À <b>7 drones en réserve</b> — ou avec une <b>charge SUPER DRONE <svg class="dic" viewBox="0 0 160 160" aria-hidden="true"><use href="#ic-super"/></svg></b> gagnée en bonus — le bouton devient SUPER DRONE : la zone de scan passe à <b>5 × 5</b> (25 cases). Une batterie située au bord de la zone (à 2 cases) reste silencieuse.</p></div>
+        <div class="aide-item"><h3>🎁 BONUS CACHÉS (CLASSIQUE)</h3><p>Après validation de votre flotte, <b>7 bonus</b> apparaissent un par un sur VOTRE grille — <b>2 missiles 🚀, 1 drone <svg class="dic" viewBox="0 0 160 160" aria-hidden="true"><use href="#ic-drone"/></svg>, 2 super <svg class="dic" viewBox="0 0 160 160" aria-hidden="true"><use href="#ic-super"/></svg>, 2 💎</b> — cachés au hasard sur des cases vides, <b>jamais sous un navire</b> (un navire repositionné ne peut pas les recouvrir). ★ v2.97. Si l'adversaire touche une case bonus — tir simple ou zone Stratus 3×3 — son tir est consommé mais il gagne <b>+50 points</b> ET : 🚀 <b>+1 missile Stratus</b> · <svg class="dic" viewBox="0 0 160 160" aria-hidden="true"><use href="#ic-drone"/></svg> <b>+1 drone</b> · <svg class="dic" viewBox="0 0 160 160" aria-hidden="true"><use href="#ic-super"/></svg> <b>+1 SUPER DRONE</b> · 💎 <b>+250 points</b> (200 + 50). Vous voyez vos marques, lui ne voit rien… <b>sauf s'il survole la zone avec un drone</b> : l'icône du bonus apparaît alors un instant sur son radar — <b>en ambre, sans l'anneau vert</b> (l'anneau reste réservé aux bonus encaissés) — puis s'efface — à lui de s'en souvenir (tire dessus pour encaisser la récompense). <b>Qui en a ?</b> Tout le monde : chaque joueur — en mode LOCAL comme sur INTERNET (créateur et invité) — cache 7 bonus sur sa propre grille.</p></div>
         <div class="aide-item"><h3>🚀 MISSILE STRATUS ×2</h3><p>Frappe la case visée + les 8 cases autour (<b>zone 3 × 3</b>). Munition précieuse : ménagez-la, elle rapporte du score si elle est intacte.</p></div>
         <div class="aide-item"><h3>🎣 PLEINE MER</h3><p><b>12 bateaux de pêche</b> cachés près des flottes. Les toucher = <b>-1 vie</b> (3 vies par joueur). Ils apparaissent en bleu au drone : <b>NE TIREZ PAS DESSUS</b>.</p></div>
         <div class="aide-item"><h3>💀 DEATH</h3><p>Chaque tir est un missile 3 × 3 <b>illimité</b>. Pas de drone. Destruction massive.</p></div>
@@ -1649,7 +1652,7 @@ const store = {
    La version du code reste affichée en rose-rouge dans le bandeau
    supérieur, sans vérification ni bouton. GAME_VERSION est la source
    unique de l'affichage. */
-const GAME_VERSION = '2.95';
+const GAME_VERSION = '2.97';
 /* le badge affiche toujours la version du code (une seule source : GAME_VERSION) */
 (() => {
   const el = document.getElementById('upd-version');
@@ -1980,7 +1983,7 @@ function randomFleet(b) {
    que s'il survole la zone avec un drone ou un SUPER DRONE (★ v2.86). */
 const BONUS_DEF = [
   { type: 'missile',    icon: '🚀', label: '+1 MISSILE STRATUS', count: 2 },
-  { type: 'drone',      icon: '🛰',  ic: 'drone', label: '+1 DRONE FURTIF',    count: 2 },
+  { type: 'drone',      icon: '🛰',  ic: 'drone', label: '+1 DRONE FURTIF',    count: 1 },
   { type: 'superdrone', icon: '🛸',  ic: 'super', label: '+1 SUPER DRONE',     count: 2 },
   { type: 'points',     icon: '💎',  label: '+200 POINTS',        count: 2 },
 ];
@@ -2067,6 +2070,34 @@ function repaintBonusMarks(g, board, onlyFound) {
   if (!g || !g.markers) return;
   g.markers.querySelectorAll('.bmark').forEach(el => el.remove());
   paintBonusMarks(g, board, onlyFound);
+}
+/* ★ v2.97 : apparition animée des bonus 1 par 1 sur la grille de placement,
+   à la fin de la validation de la flotte. Chaque marque « pop » (classe .rv)
+   avec un son léger + vibration, puis `done()` est appelé (handoff local ou
+   envoi du ready en ligne). Les marques restent affichées jusqu'au handoff. */
+function revealBonusesOneByOne(g, board, done) {
+  if (!g || !g.markers || !board || !board.bonus || !board.bonus.length) {
+    if (done) done();
+    return;
+  }
+  g.markers.querySelectorAll('.bmark').forEach(el => el.remove());
+  const list = board.bonus;
+  let i = 0;
+  const step = () => {
+    if (i >= list.length) { if (done) done(); return; }
+    const b = list[i];
+    const d = BONUS_DEF.find(x => x.type === b.type);
+    const el = document.createElement('div');
+    el.className = 'bmark spotted rv';
+    el.style.left = (b.idx % 10) * 10 + '%';
+    el.style.top = ((b.idx / 10) | 0) * 10 + '%';
+    if (d && d.ic) el.innerHTML = droneIconSVG(d.ic, 'dic'); else el.textContent = d ? d.icon : '🎁';
+    g.markers.appendChild(el);
+    Sound.tap(); vib([25, 40, 25]);
+    i++;
+    setTimeout(step, 280);
+  };
+  step();
 }
 /* Petit effet éphémère de révélation (icône qui pop sur la case) */
 function bonusRevealFx(g, x, y, type) {
@@ -2418,9 +2449,11 @@ function sinkPtsOf(shipIdx, coups) {
   const c = Math.min(5, Math.max(1, coups || def.len));
   return SINK_SPEED_PTS[c] + def.pts;
 }
-/* ★ v2.95 : compteur de drones OBTENUS dans la partie (bonus de grille + navires
-   coulés ; le stock initial de 5 ne compte pas). Sert à retirer le bonus
-   « +1 SUPER DRONE » des bonus de grille à partir de 8 drones obtenus. */
+/* ★ v2.95 / v2.96 : compteur de drones OBTENUS dans la partie. Depuis la v2.96,
+   les drones ne viennent plus que des bonus de grille 🛰 (max 2) — couler un
+   navire n'en donne plus. Le seuil « 8 drones obtenus » qui retirait le bonus
+   +1 SUPER DRONE (v2.95) est donc devenu inatteignable : le check reste en
+   place comme filet de sécurité, mais ne se déclenche plus en pratique. */
 function dronesGot(p) {
   if (S.mode === 'online') return S.stats.dronesGot || 0;
   return (S.pstats && S.pstats[p] && S.pstats[p].dronesGot) || 0;
@@ -4306,9 +4339,9 @@ function resolveBigMissileImpact(cx, cy) {
 
   /* Log */
   logMsg(`<b style="color:var(--red)">MISSILE STRATUS</b> — ${hits} touché${hits > 1 ? 's' : ''}${sunkShips > 0 ? `, ${sunkShips} coulé${sunkShips > 1 ? 's' : ''}` : ''}`);
-  /* Récompense : +1 drone par navire ennemi coulé via le missile Stratus.
-     Déclenchés en cascade à T=300, 1300, 2300ms... (1s d'intervalle) pour
-     que chaque flash soit visible avant le handoff. */
+  /* ★ v2.96 : couler un navire ne donne plus de drone (awardStealthDrone est
+     désormais vide). On garde la cascade pour checkShipSunkBonus → missile
+     tous les 4 coulés, qui reste actif. */
   for (let i = 0; i < sunkShips; i++) {
     const bonusP = currentPlayerIdx();
     setTimeout(() => { awardStealthDrone(bonusP); checkShipSunkBonus(); }, 300 + i * 1000);
@@ -4468,31 +4501,23 @@ function myBoard() {
   if (S.mode === 'local') return S.boards[S.localTurn];
   return S.board;
 }
-/* Récompense : +1 drone furtif quand on coule un navire ennemi.
-   Appelée à chaque coulage, quel que soit le mode (tir normal, gros missile). */
+/* ★ v2.97 : règle coulage — +1 drone furtif aux 1er, 2e et 4e navires ennemis
+   coulés (le 4e déclenche AUSSI le missile Stratus via checkShipSunkBonus).
+   Le 3e et les suivants ne donnent rien. Les drones se gagnent aussi en
+   touchant un bonus 🛰 caché sur la grille adverse (max 1 en v2.97). */
 function awardStealthDrone(playerIdx) {
-  /* playerIdx est l'index du joueur qui a coulé le navire (capturé au
-     moment du coulage, avant le changement de tour). */
   const p = playerIdx != null ? playerIdx : currentPlayerIdx();
-  /* ★ Règle : tous les 4 navires coulés, on donne un MISSILE Stratus
-     à la place (géré par checkShipSunkBonus appelée juste après).
-     On saute donc le bonus drone pour ce navire. */
-  const currentCount = S.shipsSunkByPlayer[p] || 0;
-  if ((currentCount + 1) % 4 === 0) {
-    return;
-  }
+  const n = (S.shipsSunkByPlayer[p] || 0) + 1;  /* rang de CE coulage (1..) */
+  if (n !== 1 && n !== 2 && n !== 4) return;     /* seuls les 1er, 2e et 4e */
   const before = S.stealthLeft[p] || 0;
   S.stealthLeft[p] = before + 1;
-  addDronesGot(p, 1);  /* ★ v2.95 : compteur de drones obtenus (bonus + coulés) */
-  /* ★ v2.67 : au passage à 7 drones en stock, le SUPER scan 5×5 se débloque */
+  addDronesGot(p, 1);
   if (S.stealthLeft[p] >= 7 && before < 7) {
     logMsg('<b style="color:var(--red)">SUPER DRONE DÉBLOQUÉ</b> — 7 drones en stock : scan 5×5 (25 cases)');
-    /* ★ v2.69 : effet bonus CLASSIQUE comme les autres — le bouton SUPER
-       DRONE clignote avec le « +1 » flottant rouge (pas de bannière). */
     if (p === currentPlayerIdx()) flashButton('btn-superdrone');
   }
   if (p === currentPlayerIdx()) updateStealthButton();
-  logMsg('<b style="color:var(--amber)">+1 DRONE FURTIF</b> — navire ennemi coulé');
+  logMsg('<b style="color:var(--amber)">+1 DRONE FURTIF</b> — ' + (n === 4 ? '4e navire coulé' : (n + 'e navire coulé')));
   vib([30, 60, 30]);
   if (p === currentPlayerIdx()) flashButton('btn-stealth');
 }
@@ -5456,8 +5481,8 @@ function onReport(r) {
         const c0 = (s.cells && s.cells[0]) || { x: r.x, y: r.y };
         setTimeout(() => ptsFx(GRIDS.radar, c0.x, c0.y, '+' + sinkPtsOf(s.idx, s.coups)), 350 + i * 1000);
       });
-      /* ★ Récompenses : +1 drone PAR navire coulé (cascade 1 s), comme en
-         local (avant : un seul bonus quel que soit le nombre de coulés). */
+      /* ★ v2.96 : plus de drone au coulage (awardStealthDrone est vide). La
+         cascade reste pour checkShipSunkBonus → missile tous les 4 coulés. */
       for (let i = 0; i < nSunk; i++) {
         setTimeout(() => { awardStealthDrone(currentPlayerIdx()); checkShipSunkBonus(); }, 300 + i * 1000);
       }
@@ -7000,38 +7025,37 @@ $('#btn-bigmissile').addEventListener('click', () => { Sound.tap(); toggleBigMis
     S.readySent = true;
     lockPlacement(true);
     refreshPlacement();
-    /* ★ v2.94 : bonus cachés Classique rétablis pour TOUS les joueurs —
-       8 bonus (2 de chaque) posés au hasard sur la grille validée (cases
-       vides uniquement, jamais sous un navire). Récompense pour l'adversaire
-       qui les touchera : 🚀 +1 Stratus · 🛰 +1 drone · 🛸 +1 SUPER DRONE ·
-       💎 +200 points. */
+    /* ★ v2.97 : handoff local (passage de main ou ouverture du feu) — extrait
+       en fonction pour pouvoir le retarder après l'animation des bonus. */
+    const doHandoff = () => {
+      if (P.player === 0) {
+        handoff('PASSEZ L\'APPAREIL', 'AU JOUEUR 2 — PRÉPAREZ VOTRE FLOTTE<br>Ne regardez pas.', () => { P.player = 1; enterPlacement(); });
+      } else {
+        const first = rnd(2);
+        P.player = first; /* synchronise pour cohérence interne */
+        handoff('FLOTTES EN POSITION', `LE JOUEUR ${first + 1} OUVRE LE FEU<br>Bonne chance.`, () => enterBattle(first));
+      }
+    };
+    /* ★ v2.94/v2.97 : bonus cachés Classique — 7 bonus posés au hasard sur la
+       grille validée (2 missiles · 1 drone · 2 super · 2 points ; cases vides
+       uniquement, jamais sous un navire), puis apparition animée 1 par 1 sur
+       la grille avant le handoff. Récompense pour l'adversaire qui les touche :
+       🚀 +1 Stratus · 🛰 +1 drone · 🛸 +1 SUPER DRONE · 💎 +200 points. */
     if (S.gameMode === 'classic') {
       const bboard = S.boards[P.player];
       bboard.bonus = rollBonuses(bboard);
+      revealBonusesOneByOne(GRIDS.place, bboard, doHandoff);
+      return;
     }
     /* Mode Pleine mer : place les bateaux de pêche du joueur courant
        sur sa grille, avec animation. */
     if (S.gameMode === 'fishermen') {
       spawnFishingBoatsForCurrentPlayer();
       /* v2.56 : les 12 bateaux sont posés en ~1,6s — handoff après 2,2s */
-      setTimeout(() => {
-        if (P.player === 0) {
-          handoff('PASSEZ L\'APPAREIL', 'AU JOUEUR 2 — PRÉPAREZ VOTRE FLOTTE<br>Ne regardez pas.', () => { P.player = 1; enterPlacement(); });
-        } else {
-          const first = rnd(2);
-          P.player = first;
-          handoff('FLOTTES EN POSITION', `LE JOUEUR ${first + 1} OUVRE LE FEU<br>Bonne chance.`, () => enterBattle(first));
-        }
-      }, 2200);
+      setTimeout(doHandoff, 2200);
       return;
     }
-    if (P.player === 0) {
-      handoff('PASSEZ L\'APPAREIL', 'AU JOUEUR 2 — PRÉPAREZ VOTRE FLOTTE<br>Ne regardez pas.', () => { P.player = 1; enterPlacement(); });
-    } else {
-      const first = rnd(2);
-      P.player = first; /* synchronise pour cohérence interne */
-      handoff('FLOTTES EN POSITION', `LE JOUEUR ${first + 1} OUVRE LE FEU<br>Bonne chance.`, () => enterBattle(first));
-    }
+    doHandoff();
     return;
   }
   /* Mode online */
@@ -7055,13 +7079,20 @@ $('#btn-bigmissile').addEventListener('click', () => { Sound.tap(); toggleBigMis
   }
   S.readySent = true;
   lockPlacement(true);  /* ★ v2.70 : flotte envoyée → plus aucune modif possible */
-  /* ★ v2.80/v2.86 : Classique — 8 bonus cachés (2 de chaque) posés AU HASARD sur ma grille
-     (cases vides uniquement). Ils restent SECRETS : jamais transmis, ils
-     sont révélés un par un quand l'adversaire les touche.
-     ★ v2.94 : rétablis pour TOUS les joueurs — le créateur (host) comme
-     l'invité posent leurs 8 bonus cachés sur leur propre grille. */
+  /* ★ v2.80/v2.86/v2.97 : Classique — 7 bonus cachés posés AU HASARD sur ma
+     grille (2 missiles · 1 drone · 2 super · 2 points ; cases vides uniquement).
+     Ils restent SECRETS : jamais transmis, révélés un par un quand l'adversaire
+     les touche. ★ v2.97 : apparition animée 1 par 1 sur ma grille AVANT l'envoi
+     du ready. */
   if (S.gameMode === 'classic') {
     S.board.bonus = rollBonuses(S.board);
+    revealBonusesOneByOne(GRIDS.place, S.board, () => {
+      send({ type: 'ready' });
+      refreshPlacement();
+      toast('Flotte signalée à l\'adversaire', 'ok');
+      if (S.role === 'host' && S.oppReady) hostStart();
+    });
+    return;
   }
   send({ type: 'ready' });
   refreshPlacement();
