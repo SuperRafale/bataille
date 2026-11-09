@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
-<!-- SUPER RAFALE · BUILD 2.98 · fichier autonome (+ sw.js optionnel : mode hors ligne sur serveur web) -->
+<!-- SUPER RAFALE · BUILD 2.99 · fichier autonome (+ sw.js optionnel : mode hors ligne sur serveur web) -->
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -276,9 +276,19 @@ button.bonus-flash{animation:bonusFlash .5s ease-in-out 3 !important}
    drone (icône ambre, SANS anneau vert — l'anneau reste réservé aux bonus
    encaissés, classe « found »). */
 .bmark.spotted{opacity:.95; filter:drop-shadow(0 0 5px rgba(255,180,84,.75))}
+/* ★ v2.99 : la révélation ÉPHÉMÈRE (couche .fx, via bonusSpotFx) est plus
+   grande et plus lumineuse que les marques permanentes — c'est le seul
+   moment où l'attaquant voit le bonus repéré, il doit être net pendant les
+   1,6 s de l'effet (avant : icône 18 px trop discrète au milieu du scan). */
+.fx .bmark.spotted{font-size:min(5.4vw,27px); opacity:1; z-index:9;
+  filter:drop-shadow(0 0 9px rgba(255,180,84,.95));
+  animation:bmarkSpot .4s ease-out}
 /* ★ v2.98 : apparition animée des bonus 1 par 1 à la validation de la flotte */
 .bmark.rv{animation:bmarkIn .5s ease-out}
 @keyframes bmarkIn{0%{transform:scale(.2); opacity:0}55%{transform:scale(1.7); opacity:1}100%{transform:scale(1); opacity:.95}}
+/* ★ v2.99 : pop d'apparition de la révélation ÉPHÉMÈRE (reste visible
+   jusqu'à l'effacement JS à 1,6 s — pas de fondu CSS). */
+@keyframes bmarkSpot{0%{transform:scale(.2); opacity:0}60%{transform:scale(1.35); opacity:1}100%{transform:scale(1); opacity:1}}
 .bfx{position:absolute; width:10%; height:10%; display:flex; align-items:center; justify-content:center;
   pointer-events:none; z-index:9; font-size:min(4.6vw,26px); line-height:1; animation:bfxPop 1.7s ease-out forwards}
 @keyframes bfxPop{0%{transform:scale(.2); opacity:0}18%{transform:scale(1.7); opacity:1}70%{transform:scale(1.25); opacity:1}100%{transform:scale(1); opacity:0}}
@@ -1079,7 +1089,7 @@ button.bonus-flash{animation:bonusFlash .5s ease-in-out 3 !important}
       <circle cx="20" cy="18" r="1.1" fill="#6cf5b8"/>
     </svg>
     <div class="brand">Dassault . 5gen</div>
-    <p class="version" id="upd-version">v2.98</p>
+    <p class="version" id="upd-version">v2.99</p>
     <div id="hstat"><span class="dot"></span><span id="hstat-t">HORS LIGNE</span></div>
     <button class="hbtn on" id="btn-fullscreen" aria-label="Plein écran">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
@@ -1652,7 +1662,7 @@ const store = {
    La version du code reste affichée en rose-rouge dans le bandeau
    supérieur, sans vérification ni bouton. GAME_VERSION est la source
    unique de l'affichage. */
-const GAME_VERSION = '2.98';
+const GAME_VERSION = '2.99';
 /* le badge affiche toujours la version du code (une seule source : GAME_VERSION) */
 (() => {
   const el = document.getElementById('upd-version');
@@ -2052,10 +2062,12 @@ function awardBonus(p, type, gx, gy) {
 function paintBonusMarks(g, board, onlyFound) {
   if (!board || !board.bonus || !g || !g.markers) return;
   board.bonus.forEach(b => {
-    /* ★ v2.98 : onlyFound=true peint AUSSI les bonus « spotted » (repérés par
-       un drone mais non encaissés) — sinon la marque disparaissait après
-       l'effet éphémère de 1,6 s et le joueur ne savait plus où tirer. */
-    if (onlyFound && !b.found && !b.spotted) return;
+    /* ★ v2.99 : onlyFound=true ne peint QUE les bonus ENCAISSÉS (anneau
+       vert). Les bonus repérés par un drone restent une révélation
+       ÉPHÉMÈRE (★ v2.88, bonusSpotFx) — PAS de marque permanente de
+       repérage (le fix v2.98 qui les rendait persistants est annulé :
+       régression signalée). */
+    if (onlyFound && !b.found) return;
     const d = BONUS_DEF.find(x => x.type === b.type);
     const el = document.createElement('div');
     el.className = 'bmark' + (b.found ? ' found' : ' spotted');
@@ -6127,55 +6139,65 @@ function onDroneScanResult(hits, cx, cy, fishing, bonuses) {
     const numHits = hits.length;
     /* ★ v2.65 HOF : détection réussie (au moins un navire révélé) */
     if (numHits > 0) S.stats.detections++;
-    if (numHits > 0) ptsFx(g, cx, cy, '+100');  /* ★ v2.95 : détection = +100 pts (barème) */
-    hits.forEach(h => {
-      const dot = document.createElement('div');
-      dot.className = 'target-dot' + (h.x === cx && h.y === cy ? ' center' : '');
-      dot.style.left = h.x * 10 + '%';
-      dot.style.top = h.y * 10 + '%';
-      g.fx.appendChild(dot);
-      setTimeout(() => dot.remove(), 1500);
-    });
-    /* ★ Mode Pleine mer : bateaux de pêche adverses détectés → points bleus */
-    let fishingHits = 0;
-    (fishing || []).forEach(h => {
-      showFishingBoatDetected(h.x, h.y);
-      fishingHits++;
-    });
-    /* ★ v2.87 : bonus cachés adverses repérés par le drone → révélation
-       ÉPHÉMÈRE sur le radar puis effacement — plus de marque permanente de
-       repérage (★ v2.88 : icône AMBRE sans anneau vert, l'anneau reste
-       réservé aux bonus encaissés). L'état garde la trace (un tir sur la
-       case encaissera la récompense). Repli : pair plus ancien ou message
-       sans champ bonus → rien. */
+    /* L'état est mis à jour IMMÉDIATEMENT (pas visuel) : les bonus repérés
+       sont mémorisés — un tir sur la case encaissera la récompense. */
     let bonusHits = 0;
     (bonuses || []).forEach(b => {
       const idx = xy(b.x, b.y);
       bonusHits++;
-      bonusSpotFx(b.x, b.y, b.type);
       S.radarB.bonus = S.radarB.bonus || [];
       if (!S.radarB.bonus.some(e => e.idx === idx))
         S.radarB.bonus.push({ idx, type: b.type, found: false, spotted: true });
     });
-    /* ★ v2.98 : repeint les marques de bonus du radar (spotted+found) pour
-       que les bonus repérés par le drone RESTENT visibles après l'effet
-       éphémère de 1,6 s — le joueur sait où tirer pour les encaisser. */
-    if (bonusHits > 0) repaintBonusMarks(GRIDS.radar, S.radarB, true);
-    const logParts = [(S.lastDroneSuper
-      ? `<b style="color:var(--red)">SUPER DRONE</b>`
-      : `<b style="color:var(--phos)">DRONE FURTIF</b>`)];
-    if (numHits > 0) logParts.push(`<b class="k-ok">${numHits} navire${numHits > 1 ? 's' : ''}</b>`);
-    if (fishingHits > 0) logParts.push(`<b style="color:#5d9eff">${fishingHits} bateau${fishingHits > 1 ? 'x' : ''} de pêche ⚠</b>`);
-    if (bonusHits > 0) logParts.push(`<b style="color:#6cf5b8">${bonusHits} bonus repéré${bonusHits > 1 ? 's' : ''} 🎁</b>`);
-    if (numHits === 0 && fishingHits === 0 && bonusHits === 0) logParts.push('aucune cible');
-    logMsg(logParts.join(' — '));
-    if (fishingHits > 0) {
-      toast(`⚠ ${fishingHits} bateau${fishingHits > 1 ? 'x' : ''} de pêche détecté${fishingHits > 1 ? 's' : ''} — NE PAS TIRER DESSUS`, 'warn', 3000);
-    }
-    if (bonusHits > 0) {
-      toast(`🎁 ${bonusHits} bonus ennemi${bonusHits > 1 ? 's' : ''} repéré${bonusHits > 1 ? 's' : ''} — tirez dessus pour l'encaisser`, 'ok', 3000);
-    }
-    vib(numHits > 0 || fishingHits > 0 || bonusHits > 0 ? [40, 30, 40] : [30]);
+    /* ★ v2.99 : synchronise la révélation AVEC LE VOL DU DRONE. Le défenseur
+       répond dès réception du scan — souvent AVANT que le drone n'atteigne
+       la zone : les points, points verts et l'effet éphémère des bonus
+       s'affichaient trop tôt et s'effaçaient (1,6 s) avant le passage du
+       drone → « les bonus ne s'affichent pas ». On attend le moment de
+       détection du scan, MÊME horloge que stealthScan en local
+       (detectionTime = lastScanKillAt - 880) et onDroneShotReceived. */
+    const elapsed = S.lastScanStart ? performance.now() - S.lastScanStart : 0;
+    const wait = S.lastScanStart ? Math.max(0, (S.lastScanKillAt || 1630) - 880 - elapsed) : 0;
+    const reveal = () => {
+      if (!S.battle) return;
+      if (numHits > 0) ptsFx(g, cx, cy, '+100');  /* ★ v2.95 : détection = +100 pts (barème) */
+      hits.forEach(h => {
+        const dot = document.createElement('div');
+        dot.className = 'target-dot' + (h.x === cx && h.y === cy ? ' center' : '');
+        dot.style.left = h.x * 10 + '%';
+        dot.style.top = h.y * 10 + '%';
+        g.fx.appendChild(dot);
+        setTimeout(() => dot.remove(), 1500);
+      });
+      /* ★ Mode Pleine mer : bateaux de pêche adverses détectés → points bleus */
+      let fishingHits = 0;
+      (fishing || []).forEach(h => {
+        showFishingBoatDetected(h.x, h.y);
+        fishingHits++;
+      });
+      /* ★ v2.87/v2.88 : bonus cachés adverses repérés par le drone →
+         révélation ÉPHÉMÈRE uniquement (icône ambre sans anneau, effacement
+         après 1,6 s ; repérés, PAS de marque permanente — l'anneau reste
+         réservé aux bonus encaissés). */
+      (bonuses || []).forEach(b => bonusSpotFx(b.x, b.y, b.type));
+      const logParts = [(S.lastDroneSuper
+        ? `<b style="color:var(--red)">SUPER DRONE</b>`
+        : `<b style="color:var(--phos)">DRONE FURTIF</b>`)];
+      if (numHits > 0) logParts.push(`<b class="k-ok">${numHits} navire${numHits > 1 ? 's' : ''}</b>`);
+      if (fishingHits > 0) logParts.push(`<b style="color:#5d9eff">${fishingHits} bateau${fishingHits > 1 ? 'x' : ''} de pêche ⚠</b>`);
+      if (bonusHits > 0) logParts.push(`<b style="color:#6cf5b8">${bonusHits} bonus repéré${bonusHits > 1 ? 's' : ''} 🎁</b>`);
+      if (numHits === 0 && fishingHits === 0 && bonusHits === 0) logParts.push('aucune cible');
+      logMsg(logParts.join(' — '));
+      if (fishingHits > 0) {
+        toast(`⚠ ${fishingHits} bateau${fishingHits > 1 ? 'x' : ''} de pêche détecté${fishingHits > 1 ? 's' : ''} — NE PAS TIRER DESSUS`, 'warn', 3000);
+      }
+      if (bonusHits > 0) {
+        toast(`🎁 ${bonusHits} bonus ennemi${bonusHits > 1 ? 's' : ''} repéré${bonusHits > 1 ? 's' : ''} — tirez dessus pour l'encaisser`, 'ok', 3000);
+      }
+      vib(numHits > 0 || fishingHits > 0 || bonusHits > 0 ? [40, 30, 40] : [30]);
+    };
+    if (wait > 30) setTimeout(() => { try { reveal(); } catch(e) { console.error('onDroneScanResult reveal error:', e); } }, wait);
+    else reveal();
   } catch(e) { console.error('onDroneScanResult error:', e); }
 }
 /* ★ Notre drone a été détecté par la défense adverse. Côté attaquant,
