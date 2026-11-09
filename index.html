@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
-<!-- SUPER RAFALE · BUILD 2.97 · fichier autonome (+ sw.js optionnel : mode hors ligne sur serveur web) -->
+<!-- SUPER RAFALE · BUILD 2.98 · fichier autonome (+ sw.js optionnel : mode hors ligne sur serveur web) -->
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -276,7 +276,7 @@ button.bonus-flash{animation:bonusFlash .5s ease-in-out 3 !important}
    drone (icône ambre, SANS anneau vert — l'anneau reste réservé aux bonus
    encaissés, classe « found »). */
 .bmark.spotted{opacity:.95; filter:drop-shadow(0 0 5px rgba(255,180,84,.75))}
-/* ★ v2.97 : apparition animée des bonus 1 par 1 à la validation de la flotte */
+/* ★ v2.98 : apparition animée des bonus 1 par 1 à la validation de la flotte */
 .bmark.rv{animation:bmarkIn .5s ease-out}
 @keyframes bmarkIn{0%{transform:scale(.2); opacity:0}55%{transform:scale(1.7); opacity:1}100%{transform:scale(1); opacity:.95}}
 .bfx{position:absolute; width:10%; height:10%; display:flex; align-items:center; justify-content:center;
@@ -1079,7 +1079,7 @@ button.bonus-flash{animation:bonusFlash .5s ease-in-out 3 !important}
       <circle cx="20" cy="18" r="1.1" fill="#6cf5b8"/>
     </svg>
     <div class="brand">Dassault . 5gen</div>
-    <p class="version" id="upd-version">v2.97</p>
+    <p class="version" id="upd-version">v2.98</p>
     <div id="hstat"><span class="dot"></span><span id="hstat-t">HORS LIGNE</span></div>
     <button class="hbtn on" id="btn-fullscreen" aria-label="Plein écran">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
@@ -1467,9 +1467,9 @@ button.bonus-flash{animation:bonusFlash .5s ease-in-out 3 !important}
       <div id="aide-list">
         <div class="aide-item"><h3>⚓ LE BUT</h3><p>Coulez les <b>5 navires adverses</b> avant qu'il ne coule les vôtres. Chaque joueur amarre sa flotte (porte-avions 5, croiseur 4, frégate 3, sous-marin 3, torpilleur 2), puis les tirs alternent : un par tour, touché ou à l'eau.</p></div>
         <div class="aide-item"><h3>🎯 VISER</h3><p>La vue <b>RADAR</b> montre la grille ennemie pour choisir vos tirs ; la vue <b>MA FLOTTE</b> montre la vôtre, vos navires touchés et vos <b>batteries anti-drônes</b> (2, installées sur le croiseur et la frégate).</p></div>
-        <div class="aide-item"><h3><svg class="dic" viewBox="0 0 160 160" aria-hidden="true"><use href="#ic-drone"/></svg> DRONE FURTIF ×5</h3><p>Scanne la case visée + 4 adjacentes (croix). Navires révélés = <b>points verts</b>. ⚠ Les batteries ennemies <b>tirent et détruisent le drone</b> si la case visée est à <b>1 case ou moins</b> d'elles — visez plus loin ! ★ v2.97 : vous gagnez <b>+1 drone</b> en coulant le <b>1er, le 2e et le 4e navire ennemi</b>, et en touchant un bonus <svg class="dic" viewBox="0 0 160 160" aria-hidden="true"><use href="#ic-drone"/></svg> caché. Le 4e coulé déclenche AUSSI <b>+1 missile Stratus</b>.</p></div>
+        <div class="aide-item"><h3><svg class="dic" viewBox="0 0 160 160" aria-hidden="true"><use href="#ic-drone"/></svg> DRONE FURTIF ×5</h3><p>Scanne la case visée + 4 adjacentes (croix). Navires révélés = <b>points verts</b>. ⚠ Les batteries ennemies <b>tirent et détruisent le drone</b> si la case visée est à <b>1 case ou moins</b> d'elles — visez plus loin ! ★ v2.98 : vous gagnez <b>+1 drone</b> en coulant le <b>1er, le 2e et le 4e navire ennemi</b>, et en touchant un bonus <svg class="dic" viewBox="0 0 160 160" aria-hidden="true"><use href="#ic-drone"/></svg> caché. Le 4e coulé déclenche AUSSI <b>+1 missile Stratus</b>.</p></div>
         <div class="aide-item"><h3><svg class="dic" viewBox="0 0 160 160" aria-hidden="true"><use href="#ic-super"/></svg> SUPER DRONE</h3><p>À <b>7 drones en réserve</b> — ou avec une <b>charge SUPER DRONE <svg class="dic" viewBox="0 0 160 160" aria-hidden="true"><use href="#ic-super"/></svg></b> gagnée en bonus — le bouton devient SUPER DRONE : la zone de scan passe à <b>5 × 5</b> (25 cases). Une batterie située au bord de la zone (à 2 cases) reste silencieuse.</p></div>
-        <div class="aide-item"><h3>🎁 BONUS CACHÉS (CLASSIQUE)</h3><p>Après validation de votre flotte, <b>7 bonus</b> apparaissent un par un sur VOTRE grille — <b>2 missiles 🚀, 1 drone <svg class="dic" viewBox="0 0 160 160" aria-hidden="true"><use href="#ic-drone"/></svg>, 2 super <svg class="dic" viewBox="0 0 160 160" aria-hidden="true"><use href="#ic-super"/></svg>, 2 💎</b> — cachés au hasard sur des cases vides, <b>jamais sous un navire</b> (un navire repositionné ne peut pas les recouvrir). ★ v2.97. Si l'adversaire touche une case bonus — tir simple ou zone Stratus 3×3 — son tir est consommé mais il gagne <b>+50 points</b> ET : 🚀 <b>+1 missile Stratus</b> · <svg class="dic" viewBox="0 0 160 160" aria-hidden="true"><use href="#ic-drone"/></svg> <b>+1 drone</b> · <svg class="dic" viewBox="0 0 160 160" aria-hidden="true"><use href="#ic-super"/></svg> <b>+1 SUPER DRONE</b> · 💎 <b>+250 points</b> (200 + 50). Vous voyez vos marques, lui ne voit rien… <b>sauf s'il survole la zone avec un drone</b> : l'icône du bonus apparaît alors un instant sur son radar — <b>en ambre, sans l'anneau vert</b> (l'anneau reste réservé aux bonus encaissés) — puis s'efface — à lui de s'en souvenir (tire dessus pour encaisser la récompense). <b>Qui en a ?</b> Tout le monde : chaque joueur — en mode LOCAL comme sur INTERNET (créateur et invité) — cache 7 bonus sur sa propre grille.</p></div>
+        <div class="aide-item"><h3>🎁 BONUS CACHÉS (CLASSIQUE)</h3><p>Après validation de votre flotte, <b>7 bonus</b> apparaissent un par un sur VOTRE grille — <b>2 missiles 🚀, 1 drone <svg class="dic" viewBox="0 0 160 160" aria-hidden="true"><use href="#ic-drone"/></svg>, 2 super <svg class="dic" viewBox="0 0 160 160" aria-hidden="true"><use href="#ic-super"/></svg>, 2 💎</b> — cachés au hasard sur des cases vides, <b>jamais sous un navire</b> (un navire repositionné ne peut pas les recouvrir). ★ v2.98. Si l'adversaire touche une case bonus — tir simple ou zone Stratus 3×3 — son tir est consommé mais il gagne <b>+50 points</b> ET : 🚀 <b>+1 missile Stratus</b> · <svg class="dic" viewBox="0 0 160 160" aria-hidden="true"><use href="#ic-drone"/></svg> <b>+1 drone</b> · <svg class="dic" viewBox="0 0 160 160" aria-hidden="true"><use href="#ic-super"/></svg> <b>+1 SUPER DRONE</b> · 💎 <b>+250 points</b> (200 + 50). Vous voyez vos marques, lui ne voit rien… <b>sauf s'il survole la zone avec un drone</b> : l'icône du bonus apparaît alors un instant sur son radar — <b>en ambre, sans l'anneau vert</b> (l'anneau reste réservé aux bonus encaissés) — puis s'efface — à lui de s'en souvenir (tire dessus pour encaisser la récompense). <b>Qui en a ?</b> Tout le monde : chaque joueur — en mode LOCAL comme sur INTERNET (créateur et invité) — cache 7 bonus sur sa propre grille.</p></div>
         <div class="aide-item"><h3>🚀 MISSILE STRATUS ×2</h3><p>Frappe la case visée + les 8 cases autour (<b>zone 3 × 3</b>). Munition précieuse : ménagez-la, elle rapporte du score si elle est intacte.</p></div>
         <div class="aide-item"><h3>🎣 PLEINE MER</h3><p><b>12 bateaux de pêche</b> cachés près des flottes. Les toucher = <b>-1 vie</b> (3 vies par joueur). Ils apparaissent en bleu au drone : <b>NE TIREZ PAS DESSUS</b>.</p></div>
         <div class="aide-item"><h3>💀 DEATH</h3><p>Chaque tir est un missile 3 × 3 <b>illimité</b>. Pas de drone. Destruction massive.</p></div>
@@ -1652,7 +1652,7 @@ const store = {
    La version du code reste affichée en rose-rouge dans le bandeau
    supérieur, sans vérification ni bouton. GAME_VERSION est la source
    unique de l'affichage. */
-const GAME_VERSION = '2.97';
+const GAME_VERSION = '2.98';
 /* le badge affiche toujours la version du code (une seule source : GAME_VERSION) */
 (() => {
   const el = document.getElementById('upd-version');
@@ -2052,7 +2052,10 @@ function awardBonus(p, type, gx, gy) {
 function paintBonusMarks(g, board, onlyFound) {
   if (!board || !board.bonus || !g || !g.markers) return;
   board.bonus.forEach(b => {
-    if (onlyFound && !b.found) return;
+    /* ★ v2.98 : onlyFound=true peint AUSSI les bonus « spotted » (repérés par
+       un drone mais non encaissés) — sinon la marque disparaissait après
+       l'effet éphémère de 1,6 s et le joueur ne savait plus où tirer. */
+    if (onlyFound && !b.found && !b.spotted) return;
     const d = BONUS_DEF.find(x => x.type === b.type);
     const el = document.createElement('div');
     el.className = 'bmark' + (b.found ? ' found' : ' spotted');
@@ -2071,7 +2074,7 @@ function repaintBonusMarks(g, board, onlyFound) {
   g.markers.querySelectorAll('.bmark').forEach(el => el.remove());
   paintBonusMarks(g, board, onlyFound);
 }
-/* ★ v2.97 : apparition animée des bonus 1 par 1 sur la grille de placement,
+/* ★ v2.98 : apparition animée des bonus 1 par 1 sur la grille de placement,
    à la fin de la validation de la flotte. Chaque marque « pop » (classe .rv)
    avec un son léger + vibration, puis `done()` est appelé (handoff local ou
    envoi du ready en ligne). Les marques restent affichées jusqu'au handoff. */
@@ -2162,6 +2165,7 @@ const S = {
      lastSeen/hbTimer : battement de cœur (détection de liaison qui saute).
      peerLeftAt/leftGrace : grâce de reconnexion quand l'adversaire décroche. */
   msgSeq: 0, seenIds: [], peerCap: 0, pending: [],
+  netWatchdog: null, netWatchdogKind: null, netWatchdogCtx: null,
   lastSeen: 0, hbStart: 0, hbTimer: null,
   peerLeftAt: 0, leftGrace: null, rejoinTries: 0, rejoining: false,
   code: '', board: null, radarB: null,
@@ -3834,7 +3838,10 @@ function tryFire(x, y) {
   S.lastFireAt = performance.now(); S.lastFireFall = 700;
   /* Lance le missile visible, puis résout le tir après l'impact */
   launchStealthMissile(x, y);
-  if (S.mode === 'online') send({ type: 'fire', x, y });
+  if (S.mode === 'online') {
+    send({ type: 'fire', x, y });
+    armNetWatchdog('shot', 12000, { x, y });  /* ★ v2.98 : anti-blocage */
+  }
 }
 /* Mode Pleine mer : gère le tir sur un bateau de pêche.
    - Affiche une explosion bleue
@@ -4109,10 +4116,13 @@ function fireBigMissileDeath(cx, cy) {
   if (S.mode === 'online') send({ type: 'fire', x: cx, y: cy, bigMissile: true });
   doFireBigMissile(cx, cy);
 }
+/* ★ v2.98 : arme le watchdog bigMissile après l'envoi (factored — appelé
+   par les 2 variantes fireBigMissile + fireBigMissileDeath via doFireBigMissile). */
 /* Logique commune de tir Stratus (animation + impact + passage de tour).
    Utilisée par fireBigMissile (mode normal) et fireBigMissileDeath (mode Death). */
 function doFireBigMissile(cx, cy) {
   S.busy = true; updateTurnbar();
+  if (S.mode === 'online') armNetWatchdog('missile', 14000, { x: cx, y: cy, bigMissile: true });  /* ★ v2.98 */
   Sound.ping(); vib([15, 30, 15]);
   Sound.whistle(1.0);  /* Sifflement d'approche du gros missile */
   /* ★ v2.54 : horodate le tir Stratus (chute 1000 ms) pour la synchro réseau. */
@@ -4501,10 +4511,10 @@ function myBoard() {
   if (S.mode === 'local') return S.boards[S.localTurn];
   return S.board;
 }
-/* ★ v2.97 : règle coulage — +1 drone furtif aux 1er, 2e et 4e navires ennemis
+/* ★ v2.98 : règle coulage — +1 drone furtif aux 1er, 2e et 4e navires ennemis
    coulés (le 4e déclenche AUSSI le missile Stratus via checkShipSunkBonus).
    Le 3e et les suivants ne donnent rien. Les drones se gagnent aussi en
-   touchant un bonus 🛰 caché sur la grille adverse (max 1 en v2.97). */
+   touchant un bonus 🛰 caché sur la grille adverse (max 1 en v2.98). */
 function awardStealthDrone(playerIdx) {
   const p = playerIdx != null ? playerIdx : currentPlayerIdx();
   const n = (S.shipsSunkByPlayer[p] || 0) + 1;  /* rang de CE coulage (1..) */
@@ -5092,6 +5102,7 @@ function stealthScan(cx, cy) {
      et qu'il renvoie les cases détectées (droneScanResult). */
   if (S.mode === 'online') {
     send({ type: 'droneScan', cx, cy, sup: isSuper });
+    armNetWatchdog('drone', 9000, { cx, cy });  /* ★ v2.98 : anti-blocage */
   }
 
   /* Le drone (même SVG que la page d'accueil) */
@@ -5393,6 +5404,7 @@ function launchStealthMissile(cx, cy) {
 /* (resolveStealthImpact supprimée — le tir normal utilise maintenant launchStealthMissile + resolveAfterMissile) */
 function onReport(r) {
   try {
+  clearNetWatchdog();  /* ★ v2.98 : le report adverse est arrivé — on annule le garde-fou */
   removeCrosshair();
   /* ★ Si c'est un report de missile Stratus → met à jour toutes les cases 3×3 */
   if (r.bigMissile && r.hitCells) {
@@ -6109,6 +6121,7 @@ function onDroneScanReceived(cx, cy, isSuper) {
    Côté attaquant, on affiche les points verts sur le radar et on log. */
 function onDroneScanResult(hits, cx, cy, fishing, bonuses) {
   try {
+    clearNetWatchdog();  /* ★ v2.98 : le résultat du scan adverse est arrivé */
     const g = GRIDS.radar;
     if (!g || !g.fx) return;
     const numHits = hits.length;
@@ -6144,6 +6157,10 @@ function onDroneScanResult(hits, cx, cy, fishing, bonuses) {
       if (!S.radarB.bonus.some(e => e.idx === idx))
         S.radarB.bonus.push({ idx, type: b.type, found: false, spotted: true });
     });
+    /* ★ v2.98 : repeint les marques de bonus du radar (spotted+found) pour
+       que les bonus repérés par le drone RESTENT visibles après l'effet
+       éphémère de 1,6 s — le joueur sait où tirer pour les encaisser. */
+    if (bonusHits > 0) repaintBonusMarks(GRIDS.radar, S.radarB, true);
     const logParts = [(S.lastDroneSuper
       ? `<b style="color:var(--red)">SUPER DRONE</b>`
       : `<b style="color:var(--phos)">DRONE FURTIF</b>`)];
@@ -6511,6 +6528,45 @@ const send = o => {
   }
   return rawSend(o);
 };
+/* ★ v2.98 : WATCHDOG ANTI-BLOCAGE — quand on envoie un tir / missile / drone
+   en ligne, on arme un garde-fou. Si la réponse du défenseur (report /
+   droneScanResult) n'arrive pas à temps (la pompe de renvoi tente pendant
+   15 s, mais une erreur côté défenseur pourrait empêcher toute réponse), on
+   récupère : on résout le tir localement en « à l'eau », on libère busy /
+   stealthRevealing et on passe le tour. Sans cela, l'attaquant restait
+   bloqué (busy=true) indéfiniment → désynchronisation totale de la partie. */
+function armNetWatchdog(kind, ms, ctx) {
+  clearNetWatchdog();
+  S.netWatchdogKind = kind;
+  S.netWatchdogCtx = ctx || null;
+  S.netWatchdog = setTimeout(recoverNetWatchdog, ms || 12000);
+}
+function clearNetWatchdog() {
+  if (S.netWatchdog) { clearTimeout(S.netWatchdog); S.netWatchdog = null; }
+  S.netWatchdogKind = null; S.netWatchdogCtx = null;
+}
+function recoverNetWatchdog() {
+  const kind = S.netWatchdogKind;
+  S.netWatchdog = null; S.netWatchdogKind = null; S.netWatchdogCtx = null;
+  if (S.mode !== 'online' || !S.battle) return;
+  console.warn('SR watchdog: aucune réponse réseau pour « ' + kind + ' » — récupération locale');
+  /* ★ v2.98 : on NE marque pas de cases (un report tardif arriverait et
+     contredirait un faux « à l'eau »). On libère juste le contrôle et on
+     passe le tour — si le report finit par arriver, onReport l'appliquera
+     normalement (idempotent : remet busy=false + tour='them'). */
+  if (kind === 'drone') {
+    S.stealthRevealing = false;
+    updateStealthButton(); updateTurnbar();
+    toast('Réseau lent — résultat du drone perdu', 'warn', 3000);
+    return;
+  }
+  removeCrosshair();
+  logMsg('<b style="color:var(--amber)">RÉSEAU LENT</b> — pas de réponse adverse, tour passé');
+  toast('Réseau lent — tour passé', 'warn', 3000);
+  S.turn = 'them'; S.busy = false;
+  updateTurnbar();
+  setTimeout(() => { if (S.battle && S.view === 'radar') switchView('mine'); }, 1000);
+}
 /* ★ v2.85 : pompe de renvoi — tous les messages non accusés repartent. */
 function pumpPending() {
   if (!S.pending.length || S.mode !== 'online') return;
@@ -6801,6 +6857,7 @@ function cleanupNet() {
   /* ★ v2.85 : arrêt propre des mécanismes anti-coupures + remise à zéro
      du protocole (numérotation, accusés, battement de cœur, grâce). */
   stopHeartbeat(); clearPeerGrace();
+  clearNetWatchdog();  /* ★ v2.98 : annule le garde-fou anti-blocage */
   S.msgSeq = 0; S.seenIds = []; S.peerCap = 0; S.pending = [];
   S.lastSeen = 0; S.rejoining = false; S.rejoinTries = 0;
 }
@@ -7025,7 +7082,7 @@ $('#btn-bigmissile').addEventListener('click', () => { Sound.tap(); toggleBigMis
     S.readySent = true;
     lockPlacement(true);
     refreshPlacement();
-    /* ★ v2.97 : handoff local (passage de main ou ouverture du feu) — extrait
+    /* ★ v2.98 : handoff local (passage de main ou ouverture du feu) — extrait
        en fonction pour pouvoir le retarder après l'animation des bonus. */
     const doHandoff = () => {
       if (P.player === 0) {
@@ -7036,7 +7093,7 @@ $('#btn-bigmissile').addEventListener('click', () => { Sound.tap(); toggleBigMis
         handoff('FLOTTES EN POSITION', `LE JOUEUR ${first + 1} OUVRE LE FEU<br>Bonne chance.`, () => enterBattle(first));
       }
     };
-    /* ★ v2.94/v2.97 : bonus cachés Classique — 7 bonus posés au hasard sur la
+    /* ★ v2.94/v2.98 : bonus cachés Classique — 7 bonus posés au hasard sur la
        grille validée (2 missiles · 1 drone · 2 super · 2 points ; cases vides
        uniquement, jamais sous un navire), puis apparition animée 1 par 1 sur
        la grille avant le handoff. Récompense pour l'adversaire qui les touche :
@@ -7079,10 +7136,10 @@ $('#btn-bigmissile').addEventListener('click', () => { Sound.tap(); toggleBigMis
   }
   S.readySent = true;
   lockPlacement(true);  /* ★ v2.70 : flotte envoyée → plus aucune modif possible */
-  /* ★ v2.80/v2.86/v2.97 : Classique — 7 bonus cachés posés AU HASARD sur ma
+  /* ★ v2.80/v2.86/v2.98 : Classique — 7 bonus cachés posés AU HASARD sur ma
      grille (2 missiles · 1 drone · 2 super · 2 points ; cases vides uniquement).
      Ils restent SECRETS : jamais transmis, révélés un par un quand l'adversaire
-     les touche. ★ v2.97 : apparition animée 1 par 1 sur ma grille AVANT l'envoi
+     les touche. ★ v2.98 : apparition animée 1 par 1 sur ma grille AVANT l'envoi
      du ready. */
   if (S.gameMode === 'classic') {
     S.board.bonus = rollBonuses(S.board);
