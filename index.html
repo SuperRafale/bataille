@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
-<!-- SUPER RAFALE · BUILD 3.03 · fichier autonome (+ sw.js optionnel : mode hors ligne sur serveur web) -->
+<!-- SUPER RAFALE · BUILD 3.04 · fichier autonome (+ sw.js optionnel : mode hors ligne sur serveur web) -->
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -1089,7 +1089,7 @@ button.bonus-flash{animation:bonusFlash .5s ease-in-out 3 !important}
       <circle cx="20" cy="18" r="1.1" fill="#6cf5b8"/>
     </svg>
     <div class="brand">Dassault . 5gen</div>
-    <p class="version" id="upd-version">v3.03</p>
+    <p class="version" id="upd-version">v3.04</p>
     <div id="hstat"><span class="dot"></span><span id="hstat-t">HORS LIGNE</span></div>
     <button class="hbtn on" id="btn-fullscreen" aria-label="Plein écran">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
@@ -1663,7 +1663,7 @@ const store = {
    La version du code reste affichée en rose-rouge dans le bandeau
    supérieur, sans vérification ni bouton. GAME_VERSION est la source
    unique de l'affichage. */
-const GAME_VERSION = '3.03';
+const GAME_VERSION = '3.04';
 /* le badge affiche toujours la version du code (une seule source : GAME_VERSION) */
 (() => {
   const el = document.getElementById('upd-version');
@@ -4168,6 +4168,12 @@ function fireBigMissileDeath(cx, cy) {
    Utilisée par fireBigMissile (mode normal) et fireBigMissileDeath (mode Death). */
 function doFireBigMissile(cx, cy) {
   S.busy = true; updateTurnbar();
+  /* ★ v3.04 : horodate le tir IMMÉDIATEMENT — avant toute résolution. En
+     v3.00, l'horodatage était posé APRÈS l'appel à onReport (miroir) : le
+     calcul du délai d'impact y lisait l'horodatage du tir PRÉCÉDENT (voire
+     null au 1er missile) → délai nul → l'explosion 3×3 éclatait PENDANT la
+     chute du missile, bien avant de toucher la cible. */
+  S.lastFireAt = performance.now(); S.lastFireFall = 1000;
   if (S.mode === 'online') {
     if (S.mirrorReady) {
       /* ★ v3.00 : résolution LOCALE instantanée sur le miroir — l'impact 3×3
@@ -4183,8 +4189,8 @@ function doFireBigMissile(cx, cy) {
   }
   Sound.ping(); vib([15, 30, 15]);
   Sound.whistle(1.0);  /* Sifflement d'approche du gros missile */
-  /* ★ v2.54 : horodate le tir Stratus (chute 1000 ms) pour la synchro réseau. */
-  S.lastFireAt = performance.now(); S.lastFireFall = 1000;
+  /* ★ v2.54 : horodate le tir Stratus (chute 1000 ms) pour la synchro réseau —
+     ★ v3.04 : déplacé en TÊTE de fonction (avant onReport), voir plus haut. */
 
   /* Anime la chute du gros missile (plus gros et plus lent) */
   const targetX = cx * 10 + 5;
